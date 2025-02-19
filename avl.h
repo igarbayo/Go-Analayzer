@@ -35,7 +35,7 @@ unsigned vacia(avl A);
  * @param A árbol
  * @param E nodo
  */
-void ler(avl A, tipoelem *E);
+void leer(avl A, tipoelem *E);
 
 /**
  * Devuelve subárbol izq
@@ -58,6 +58,22 @@ avl der(avl A);
  * @param nodo nodo como argumento de salida. Vale NULL si no se encuentra cl
  */
 void buscar_nodo(avl A, tipoclave cl, tipoelem *nodo);
+
+/**
+ * Verifica si un elemento está en el árbol
+ * @param A árbol
+ * @param e elemento
+ * @return 0 si no es miembro, 1 si lo es
+ */
+unsigned es_miembro(avl A, tipoelem e);
+
+/**
+ * Verifica si una clave está en el árbol
+ * @param A árbol
+ * @param cl clave
+ * @return 0 si no es miembro, 1 si lo es
+ */
+unsigned es_miembro_clave(avl A, tipoclave cl);
 
 /**
  * Inserta un nodo

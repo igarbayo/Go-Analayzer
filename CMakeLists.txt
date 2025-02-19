@@ -5,6 +5,8 @@ set(CMAKE_C_STANDARD 11)
 
 add_executable(P1_CompGo main.c
         definiciones.h
+        avl.c
+        avl.h
         analisis_lexico.c
         analisis_sintactico.c
         analisis_lexico.h

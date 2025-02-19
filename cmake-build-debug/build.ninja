@@ -55,6 +55,12 @@ build CMakeFiles/P1_CompGo.dir/main.c.o: C_COMPILER__P1_CompGo_unscanned_Debug /
   OBJECT_DIR = CMakeFiles/P1_CompGo.dir
   OBJECT_FILE_DIR = CMakeFiles/P1_CompGo.dir
 
+build CMakeFiles/P1_CompGo.dir/avl.c.o: C_COMPILER__P1_CompGo_unscanned_Debug /home/ignacio/Escritorio/Cuarto/Segundo$ Cuatri/Compiladores/P1-CompGo/avl.c || cmake_object_order_depends_target_P1_CompGo
+  DEP_FILE = CMakeFiles/P1_CompGo.dir/avl.c.o.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/P1_CompGo.dir
+  OBJECT_FILE_DIR = CMakeFiles/P1_CompGo.dir
+
 build CMakeFiles/P1_CompGo.dir/analisis_lexico.c.o: C_COMPILER__P1_CompGo_unscanned_Debug /home/ignacio/Escritorio/Cuarto/Segundo$ Cuatri/Compiladores/P1-CompGo/analisis_lexico.c || cmake_object_order_depends_target_P1_CompGo
   DEP_FILE = CMakeFiles/P1_CompGo.dir/analisis_lexico.c.o.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
@@ -81,7 +87,7 @@ build CMakeFiles/P1_CompGo.dir/tabla_simbolos.c.o: C_COMPILER__P1_CompGo_unscann
 #############################################
 # Link the executable P1_CompGo
 
-build P1_CompGo: C_EXECUTABLE_LINKER__P1_CompGo_Debug CMakeFiles/P1_CompGo.dir/main.c.o CMakeFiles/P1_CompGo.dir/analisis_lexico.c.o CMakeFiles/P1_CompGo.dir/analisis_sintactico.c.o CMakeFiles/P1_CompGo.dir/tabla_simbolos.c.o
+build P1_CompGo: C_EXECUTABLE_LINKER__P1_CompGo_Debug CMakeFiles/P1_CompGo.dir/main.c.o CMakeFiles/P1_CompGo.dir/avl.c.o CMakeFiles/P1_CompGo.dir/analisis_lexico.c.o CMakeFiles/P1_CompGo.dir/analisis_sintactico.c.o CMakeFiles/P1_CompGo.dir/tabla_simbolos.c.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/P1_CompGo.dir
   POST_BUILD = :

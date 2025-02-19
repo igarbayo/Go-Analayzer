@@ -71,7 +71,7 @@ unsigned vacia(avl A) {
 }
 
 // Lee el elemento de un nodo
-void ler(avl A, tipoelem *E) {
+void leer(avl A, tipoelem *E) {
     *E = A->info;
 }
 
@@ -347,3 +347,25 @@ void insertar(avl *A, tipoelem E) {
     }
 
 }
+
+unsigned es_miembro_clave(avl A, tipoclave cl) {
+    if (vacia(A)) {
+        return 0;
+    }
+    int comp = _comparar_clave_elem(cl, A->info);
+
+    if (comp == 0) { //cl == A->info
+        return 1;
+    }
+    if (comp > 0) { //cl > A->info
+        return es_miembro_clave(A->der, cl);
+    }
+    //cl < A->info
+    return es_miembro_clave(A->izq, cl);
+}
+
+unsigned es_miembro(avl A, tipoelem e) {
+    return es_miembro_clave(A, _clave_elem(&e));
+}
+
+
