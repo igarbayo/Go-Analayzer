@@ -100,6 +100,9 @@ typedef struct {
 #define RUNE 378
 #define STRING 379
 
+// End-of-file
+#define FINFICHERO 500
+
 
 
 #endif //P1_COMPGO_DEFINICIONES_H
