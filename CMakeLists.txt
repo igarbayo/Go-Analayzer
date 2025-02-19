@@ -8,4 +8,6 @@ add_executable(P1_CompGo main.c
         analisis_lexico.c
         analisis_sintactico.c
         analisis_lexico.h
-        analisis_sintactico.h)
+        analisis_sintactico.h
+        tabla_simbolos.c
+        tabla_simbolos.h)

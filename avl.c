@@ -292,7 +292,7 @@ void _reestruturar(avl *A) {
 void insertar(avl *A, tipoelem E) {
     if (vacia(*A)) {
         *A = malloc(sizeof(struct celda));
-        (*A)->info.compLexico = E.compLexico;
+        (*A)->info.comp_lexico = E.comp_lexico;
         (*A)->info.lexema = malloc((strlen(E.lexema) + 1) * sizeof(char));
         //  Súmaselle 1 para o '\0' que inserta a función strcpy()
         strcpy((*A)->info.lexema, E.lexema);
