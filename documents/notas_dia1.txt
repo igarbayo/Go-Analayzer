@@ -1,0 +1,80 @@
+- se analiza Go
+- el analizador se programa en C
+- el analizador tiene que ser suf. general: si aparece un núm. entero
+  en el código, el analizador analizará cualquier núm. entero
+- inicialmente, supondremos que tenemos cargado el fichero de Go en
+  memoria.
+- imprimiremos los componentes léxicos por pantallas.
+
+
+concurrent                análisis            análisis             impresión
+sum.go          --->      léxico      --->    sintáctico   --->    por pantalla
+                          (productor)         (consumidor)
+
+- se puede programar una función en anális_lexico.c, sig_comp_lexico()
+  que estará declarada en analisis_lexico.h.
+- se hará un include de analisis_lexico.h en analisis_sintactico.c
+- sig_comp_lexico() devuelve un comp_lexico
+- se hará un while hasta EOF en el analizador_sintactico. consumidor
+  con un bucle que pide componentes léxicos hasta que le llega el fin
+  de fichero y los imprime por pantalla.
+- imprimirá en la forma:
+  componente léxico : lexema
+  el componente léxico es un número
+  el lexema es una secuencia de caracteres
+  por ejemplo: <300, "package">
+- luego la función sig_comp_lexico() devuelve un número. también se
+  imprime por pantalla el lexema en la práctica para la comprobación.
+- el análisis sintáctico es el análisis de una secuencia de números.
+
+- la práctica tiene que compilar en una máquina Ubuntu de las últimas.
+- las prácticas deberían estar muy bien documentadas.
+
+- creamos un fichero de defines de C, definiciones.h, para asignar
+  componentes léxicos a lexemas:
+  #define PACKAGE 300
+
+- tenemos un struct que guarda pares (comp_lexico, lexema) y la función
+  sig_comp_lexico() recibe y devuelve/modifica dicho struct.
+
+- main es un identificador. en definiciones.h:
+  #define ID 301
+  lo mismo para "sum" o "s". 
+- se debería imprimir algo como <301, "main">
+
+- en el analizador léxico se debe utilizar una tabla de símbolos.
+  ----------------------
+  |  "package"  |  300 |
+  ----------------------
+
+- antes de empezar el analizador léxico, se cargan todas las
+  palabras reservadas en la tabla de símbolos -> en main.c.
+
+- estructura de datos para la tabla de símbolos: árbol binario,
+  tabla hash. Utilizamos:
+  ABB.c    ABB.h    TS.c   TS.h
+
+- en el árbol binario tenemos una función insertar() que utilizamos
+  en main.c con un bucle: array palabras (comp, lexema) hardcodeadas
+  para meter en la TS (o incluso leer de fichero, pero es un problema
+  necesitar el fichero).
+
+- en TS.c y en TS.h se crea la función inicializar() que recibe el
+  array anterior.
+
+- cómo se accede desde los módulos a la tabla de símbolos. no
+  utilizamos un puntero para la tabla de símbolos. en la ts se
+  incluyen las constantes y el compilador de C, con definiciones.h,
+  ya resolverá los números.
+
+- después de la inicialización, si un elemento se busca en la TS y no
+  se encuentra, se inserta.
+
+- por ejemplo, si ponemos paréntesis izquierdo, no hay duda de lo
+  que es, luego se puede directamente devolver su código ASCII, sin
+  definirlo.
+
+- el analizador léxico debe reconocer operadores dobles y triples, por
+  lo que estos sí que puede ser conveniente definirlos.
+
+

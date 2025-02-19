@@ -1,0 +1,67 @@
+- para la práctica vamos a considerar que solo tenemos 1 bloque, que es
+  todo el fichero.
+- una vez cargamos la TS, conviene leer/imprimir los elementos de la TS.
+- luego, comenzamos la compilación.
+- el comienzo del análisis es la llamada a una función de analisis_sint
+  actico.h, programada en analisis_sinstactico.c que empieza el análisis.
+- esa función es un bucle llamado a analisis_lexico, la función siguiente,
+  que puede estar declarada para devolver struct, puntero a struct (comp.
+  léxico y lexema), etc.
+- depsues del análisis, imprimimos de nuevo la TS. Si aparecen todos los
+  identificadores encontrados, esto está bien hecho.
+- en el main podemos llamar a las correspondientes funciones de fina-
+  lización: se libera toda la memoria dinámica; y luego cerramos.
+
+
+- ahora, hablamos del análisis léxico.
+- en go, _ también puede ser una letra.
+- cuando el automata, leyendo package, llega a un estado de aceptación,
+  consulta en la TS. en la TS aparece como palabra reservada, luego ya
+  termina.
+- al leer main, como no está en la TS, es un identificador, luego se añade
+  a la TS y lo devuelve también la forma <comp. léxico, "lexema">.
+- hay comp lexicos que reconocemos en el caracter siguiente (hay que de-
+  volver dicho caracter) y en el último caracter (no hace falta devolver
+  nada, por ejemplo lo comentarios, que se reconocen al leer / tras *)
+- un comentario es una expresion regular que se analiza lexicamente pero no
+  inserta un componente lexico.
+- se puede tener un cnjunto de automatas (uno para cada comp lexico del
+  lenguaje, más otro para cmentarios y expresiones del tipo); luego el ana-
+  lizador lexico es la agregación de esos autómatas. se agregan todos los
+  autómatas y ya está.
+- como analizador lexico, se puede programar un switch case con par estado
+  y entrada mediante un bucle que va leyendo caracteres, cambiando la va-
+  riable estado; implica muchos casos de switch-case.
+
+- para resolver, este problema, encapsulamos cada subautomata de los que
+  forman el léxico en una función. es más fácil así depurar y extender el
+  código. -> se programa con condicionales pero es fácil.
+
+- si hay un error, por definición, no se genera código objeto, pero sí que
+  tengo que seguir analizando, para proporcionar la lista de errores de
+  forma completa y concisa.
+
+- en 0b0x3, al no correspoderse un num binario seguido de un id con nada,
+  error deja de ser léxico y pasa a ser sintático.
+  ./prog.go:8:20: syntax error: unexpected name x3 in composite literal;
+  possibly missing comma or }
+  ./prog.go:9:2: syntax error: non-declaration statement outside function
+  body
+
+- los ; se gestionan: si una línea termina en una serie de caracteres (ver)
+  se puede no poner ;, pues el compilador añade los ;.
+- cuando llegamos a un salto de línea, al tener que leer los caracteres
+  anteriores (contar con memoria), nos saltamos la condición de que el 
+  analizador léxico tenga que ser solo un AF -> metemos una pila en el 
+  analizador lexico para resolver el problema.
+- aun así, no deberíamos penalizar la eficiencia del compilador.
+- al no contar en concurrentSum la segunda modalidad de los ; (bucles), no
+  hace falta tenerla en cuenta en nuestro analizador léxico.
+
+
+- GESTIÓN DE LOS ERRORES
+- evitar los printf: código de error, mensaje de error y con parámetros
+- se incluyen errores.c y errores.h. se invocan funciones de error almace-
+  dos aquí y es esa función la que imprime el mensaje correspondiente.
+- tiene sentido reconocer para la práctica 1 o 2 errores (por ej., al
+  ejecutar por linea de comandos sin fichero)
