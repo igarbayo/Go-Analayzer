@@ -1,0 +1,3 @@
+/home/ignacio/Escritorio/Cuarto/Segundo Cuatri/Compiladores/P1-CompGo/cmake-build-debug/CMakeFiles/P1_CompGo.dir
+/home/ignacio/Escritorio/Cuarto/Segundo Cuatri/Compiladores/P1-CompGo/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ignacio/Escritorio/Cuarto/Segundo Cuatri/Compiladores/P1-CompGo/cmake-build-debug/CMakeFiles/rebuild_cache.dir
