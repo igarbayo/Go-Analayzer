@@ -36,19 +36,14 @@ void _procesarIdentificador();
 void _procesarOperador(char primerCaracter, contenedor *c);
 
 /**
- * Procesa una String bien construida
+ * Procesa una String o Rune bien construida
+ * No se contemplan caracteres Unicode
  * @param separador las Strings pueden empezar por ` o por "
  * @return 1 si hay error de construcción
  * @return 0 si está bien construida
  */
-int _procesarString(char separador);
+int _procesarStringRune(char separador);
 
-/**
- * Procesa una Rune bien construida
- * @return 1 si hay error de construcción
- * @return 0 si está bien construida
- */
-int _procesarRune();
 int _procesarNumero();
 int _procesarHexadecimal();
 

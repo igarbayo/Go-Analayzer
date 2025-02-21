@@ -74,7 +74,6 @@ typedef struct {
 #define IMAGINARY 377
 
 // More literals
-#define RUNE 378
 #define STRING 379
 
 // End-of-file
