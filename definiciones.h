@@ -40,15 +40,7 @@ typedef struct {
 #define TYPE 324
 #define VAR 325
 
-// Operators and punctuaction
-#define MAS 326                             // +
-#define MENOS 327                           // -
-#define POR 328                             // *
-#define BARRA 329                           // /
-#define PORCENTAJE 330                      // %
-#define AMPERSAND 331                       // &
-#define BARRAVERTICAL 332                   // |
-#define CIRCUNFLEJO 333                     // ^
+// Operators and punctuaction (dobles y triples)
 #define MENORDOBLE 334                      // <<
 #define MAYORDOBLE 335                      // >>
 #define AMPERSANDCIRCUNFLEJO 336            // &^
@@ -69,26 +61,11 @@ typedef struct {
 #define MASDOBLE 351                        // ++
 #define MENOSDOBLE 352                      // --
 #define IGUALDOBLE 353                      // ==
-#define MENOR 354                           // <
-#define MAYOR 355                           // >
-#define IGUAL 356                           // =
-#define EXCLAMACION 357                     // !
-#define VIRGULILLA 358                      // ~
 #define EXCLAMACIONIGUAL 359                // !=
 #define MENORIGUAL 360                      // <=
 #define MAYORIGUAL 361                      // >=
 #define DOSPUNTOSIGUAL 362                  // :=
 #define TRESPUNTOS 363                      // ...
-#define PARENTESISIZQ 364                   // (
-#define PARENTESISDER 365                   // )
-#define CORCHETEIZQ 366                     // [
-#define CORCHETEDER 367                     // ]
-#define LLAVEIZQ 368                        // {
-#define LLAVEDER 369                        // }
-#define COMA 370                            // ,
-#define PUNTOCOMA 371                       // ;
-#define PUNTO 372                           // .
-#define DOSPUNTOS 373                       // :
 
 // Number literals
 #define INT 374
