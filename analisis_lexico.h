@@ -8,6 +8,12 @@
 #include "definiciones.h"
 
 /**
+ * Inicia el análisis léxico
+ * @param fichero con el código fuente
+ */
+void iniciar_analisis_lexico(char* fichero);
+
+/**
  * Consume un componente léxico (contenedor)
  * @return contenedor con componente léxico y lexema asociado
  */

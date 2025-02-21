@@ -9,6 +9,9 @@
 
 void iniciar_analisis(char *nombre_fichero) {
     contenedor c;
+
+    iniciar_analisis_lexico(nombre_fichero);
+
     do {
        c = sig_comp_lexico();
        if (c.comp_lexico != FINFICHERO) {

@@ -1,14 +1,8 @@
 # ninja log v6
-6	29	1739977997100218276	CMakeFiles/P1_CompGo.dir/tabla_simbolos.c.o	dd0a083d6a45cea2
-1	9	1739976688677463917	CMakeFiles/P1_CompGo.dir/analisis_lexico.c.o	2291160e4ede79e4
-35	49	1739977997129219027	P1_CompGo	e2b03ad7f3952caa
-1	11	1739976688677463917	CMakeFiles/P1_CompGo.dir/analisis_sintactico.c.o	dd8e230c60198135
-0	16	1739966544630686247	CMakeFiles/P1_CompGo.dir/main.c.o	836bc27dd15a968d
-0	13	1740097182454074396	build.ninja	877309be8fc7f92c
-6	35	1739977997100218276	CMakeFiles/P1_CompGo.dir/avl.c.o	57d13ccacce3dacd
-1	43	1740098560096050289	CMakeFiles/P1_CompGo.dir/analisis_sintactico.c.o	dd8e230c60198135
 1	43	1740098560096050289	CMakeFiles/P1_CompGo.dir/tabla_simbolos.c.o	dd0a083d6a45cea2
-1	48	1740098560096050289	CMakeFiles/P1_CompGo.dir/avl.c.o	57d13ccacce3dacd
-1	24	1740098620676238127	CMakeFiles/P1_CompGo.dir/analisis_sintactico.c.o	dd8e230c60198135
 1	19	1740098735609251179	CMakeFiles/P1_CompGo.dir/analisis_lexico.c.o	2291160e4ede79e4
 19	33	1740098735627251474	P1_CompGo	e2b03ad7f3952caa
+1	24	1740098620676238127	CMakeFiles/P1_CompGo.dir/analisis_sintactico.c.o	dd8e230c60198135
+0	16	1739966544630686247	CMakeFiles/P1_CompGo.dir/main.c.o	836bc27dd15a968d
+0	13	1740099954630677068	build.ninja	877309be8fc7f92c
+1	48	1740098560096050289	CMakeFiles/P1_CompGo.dir/avl.c.o	57d13ccacce3dacd
