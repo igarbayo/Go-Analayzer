@@ -91,6 +91,12 @@ int buscar_elemento(char* clave) {
     }
 }
 
+void buscar_insertar_elemento(contenedor elemento) {
+    if (buscar_elemento(elemento.lexema)==-1) {
+        insertar_elemento(elemento);
+    }
+}
+
 void eliminar_tabla() {
     // Función del AVL
     destruir(&tabla);

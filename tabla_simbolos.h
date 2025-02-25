@@ -29,6 +29,12 @@ void insertar_elemento(contenedor elemento);
 int buscar_elemento(char* clave);
 
 /**
+ * Busca un elemento y, si no está, lo inserta en la TS
+ * @param elemento a introducir en la tabla. Usa como clave su lexema.
+ */
+void buscar_insertar_elemento(contenedor elemento);
+
+/**
  * Libera la memoria asociada a la TS
  */
 void eliminar_tabla();

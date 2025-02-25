@@ -5,3 +5,7 @@
 void errorString() {
 
 }
+
+void errorHexadecimal() {
+
+}

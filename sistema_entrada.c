@@ -2,6 +2,8 @@
 // Created by ignacio on 21/02/25.
 //
 
+#include "definiciones.h"
+
 void iniciar_sistema_entrada(char* fichero) {
 
 }
@@ -11,10 +13,18 @@ char sig_caracter() {
     return c;
 }
 
+void copiar_lexema(contenedor *c) {
+
+}
+
 void devolver_un_caracter() {
 
 }
 
 void devolver_dos_caracteres() {
+
+}
+
+void ignorar_caracter() {
 
 }

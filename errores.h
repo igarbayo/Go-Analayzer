@@ -7,5 +7,6 @@
 
 void errorString();
 
+void errorHexadecimal();
 
 #endif //P1_COMPGO_ERRORES_H

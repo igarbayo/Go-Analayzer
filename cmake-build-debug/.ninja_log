@@ -6,3 +6,14 @@
 0	16	1739966544630686247	CMakeFiles/P1_CompGo.dir/main.c.o	836bc27dd15a968d
 0	13	1740099954630677068	build.ninja	877309be8fc7f92c
 1	48	1740098560096050289	CMakeFiles/P1_CompGo.dir/avl.c.o	57d13ccacce3dacd
+7	53	1740487425660861724	CMakeFiles/P1_CompGo.dir/sistema_entrada.c.o	8ed4167a1838478
+6	53	1740487425659861724	CMakeFiles/P1_CompGo.dir/main.c.o	836bc27dd15a968d
+7	53	1740487425660861724	CMakeFiles/P1_CompGo.dir/analisis_lexico.c.o	2291160e4ede79e4
+7	53	1740487425660861724	CMakeFiles/P1_CompGo.dir/analisis_sintactico.c.o	dd8e230c60198135
+7	53	1740487425660861724	CMakeFiles/P1_CompGo.dir/tabla_simbolos.c.o	dd0a083d6a45cea2
+6	56	1740487425659861724	CMakeFiles/P1_CompGo.dir/avl.c.o	57d13ccacce3dacd
+53	64	1740487425706861725	CMakeFiles/P1_CompGo.dir/errores.c.o	37411f9ad1800ce0
+1	28	1740487560529865531	CMakeFiles/P1_CompGo.dir/analisis_lexico.c.o	2291160e4ede79e4
+28	42	1740487560556865532	P1_CompGo	7c74c2ff4f792f2a
+1	19	1740487604333866768	CMakeFiles/P1_CompGo.dir/main.c.o	836bc27dd15a968d
+19	32	1740487604351866768	P1_CompGo	7c74c2ff4f792f2a

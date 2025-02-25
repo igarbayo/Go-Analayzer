@@ -9,24 +9,33 @@
 #include "analisis_lexico.h"
 #include "sistema_entrada.h"
 #include "errores.h"
+#include "tabla_simbolos.h"
 
 
 // Definición para las implementaciones
 
 #define FIN_COMPONENTE 100
 
+// Variable global (se le asignan valores iniciales)
+contenedor c = {0, NULL};
+
 // Funciones privadas (cabeceras)
 
 /**
- * Salta un comentario
- * @param segundoCaracter puede ser / (empieza por //) o * (empieza por / y * y acaba en * seguido de/)
+ * Vacía el contenedor global, utilizado anteriormente
  */
-void _procesarComentario(char segundoCaracter);
+void _vaciar_contenedor();
+
+/**
+ * Salta un comentario
+ */
+void _procesarComentario();
 
 /**
  * Reconoce un identificador
+ * @param c contenedor con el componente léxico a asignar
  */
-void _procesarIdentificador();
+void _procesarIdentificador(contenedor *c);
 
 /**
  * Procesa un operador de 1 o 2 caracteres
@@ -45,7 +54,14 @@ void _procesarOperador(char primerCaracter, contenedor *c);
 int _procesarStringRune(char separador);
 
 int _procesarNumero();
-int _procesarHexadecimal();
+
+/**
+ * Procesa un número Hexadecimal. Se utiliza en _procesarNumero()
+ * @param c contenedor con el componente léxico a asignar
+ * @return 1 si hay error de construcción
+ * @return 0 si está bien construido
+ */
+int _procesarHexadecimal(contenedor *c);
 
 
 // Funciones públicas
@@ -55,7 +71,35 @@ void iniciar_analisis_lexico(char* fichero) {
 }
 
 contenedor sig_comp_lexico() {
-    contenedor c;
+    char sig = sig_caracter();
+    _vaciar_contenedor();
+
+    while (sig != EOF) {
+        sig = sig_caracter();
+        if (isalpha(sig) || sig == '_') {
+            _procesarIdentificador(&c);
+        } else if (isdigit(sig) || sig == '.') {
+            _procesarNumero();
+        } else if (sig == '`' || sig == '"') {
+            _procesarStringRune(sig);
+        } else if (sig == '/') {
+            _procesarComentario();
+            // De momento, ignoramos los tres puntos (...)
+        } else if (sig == '+' || sig == '-' || sig == '*' || sig == '%' || sig == '&' || sig == '|' ||
+                   sig == '^' || sig == '<' || sig == '>' || sig == '=' || sig == '!' || sig == '~' ||
+                   sig == ':' || sig == ',' || sig == ';' || sig == '(' || sig == ')' || sig == '[' ||
+                   sig == ']' || sig == '{' || sig == '}') {
+            _procesarOperador(sig, &c);
+            // El final del archivo
+        } else if (sig == EOF) {
+            c.comp_lexico = EOF;
+            c.lexema = NULL;
+            // Si no es ninguno de los anteriores
+        } else {
+            ignorar_caracter();
+        }
+    }
+
     return c;
 }
 
@@ -64,9 +108,23 @@ contenedor sig_comp_lexico() {
 
 // Funciones privadas (implementación)
 
-void _procesarComentario(char segundoCaracter) {
+void _vaciar_contenedor() {
+    if (c.lexema != NULL) {
+        // Liberamos memoria
+        free(c.lexema);
+        // Volvemos a los valores iniciales
+        c.comp_lexico = 0;
+        c.lexema = NULL;
+    }
+
+}
+
+void _procesarComentario() {
     char sig;
     int estado = 0;
+
+    // segundoCaracter puede ser / (empieza por //) o * (empieza por / y * y acaba en * seguido de/)
+    char segundoCaracter = sig_caracter();
 
     // Tipo "//"
     if (segundoCaracter == '/') {
@@ -97,13 +155,21 @@ void _procesarComentario(char segundoCaracter) {
     }
 }
 
-void _procesarIdentificador() {
+void _procesarIdentificador(contenedor *c) {
     char sig;
     int estado = 0;
     while (estado != FIN_COMPONENTE) {
         sig = sig_caracter();
         if (!isalnum(sig) && sig != '_') {
             estado = FIN_COMPONENTE;
+            // Se devuelve el carácter leído de más
+            devolver_un_caracter();
+            // Aceptamos el lexema
+            copiar_lexema(c);
+
+            if (c->lexema != NULL) {
+                buscar_insertar_elemento(*c);
+            }
         }
     }
 }
@@ -193,7 +259,7 @@ void _procesarOperador(char primerCaracter, contenedor *c) {
 
 }
 
-int _procesarString(char separador) {
+int _procesarStringRune(char separador) {
     char sig;
     int estado = 0;
 
@@ -251,5 +317,53 @@ int _procesarString(char separador) {
             return 1;
     }
 
+    return 0;
+}
+
+int _procesarNumero() {
+
+}
+
+int _procesarHexadecimal(contenedor *c) {
+    char sig;
+    int estado = 0;
+
+    while (estado != FIN_COMPONENTE) {
+        sig = sig_caracter();
+        // Comienzo de la lectura
+        if (estado == 0) {
+            if (isxdigit(sig)) {
+                estado = 1;
+            } else if (sig == '_') {
+                estado = 2;
+            } else {
+                // Si no hay digito HEX o _
+                errorHexadecimal();
+                return 1;
+            }
+        // Se ha leído un dígito HEX
+        } else if (estado == 1) {
+            if (!isxdigit(sig)) {
+                if (sig == '_') {
+                    estado = 2;
+                } else {
+                    // Si ya ha acabado el literal HEX
+                    estado = FIN_COMPONENTE;
+                    (c->comp_lexico) = HEX;
+                }
+            }
+        // Se ha leído una _
+        } else if (estado == 2) {
+            if (!isxdigit(sig)) {
+                // No se puede acabar en _
+                errorHexadecimal();
+                return 1;
+            } else {
+                estado = 1;
+            }
+        }
+    }
+
+    // Si no hay errores de construcción
     return 0;
 }
