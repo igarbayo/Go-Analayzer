@@ -1,6 +1,3 @@
-//
-// Created by ignacio on 19/02/25.
-//
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -274,7 +271,7 @@ int _procesarStringRune(char separador) {
                 }
                 // Si se llega al final del archivo antes, hay un error
                 if (sig == EOF) {
-                    errorString();
+                    error_string();
                     return 1;
                 }
             }
@@ -294,18 +291,18 @@ int _procesarStringRune(char separador) {
                     }
                     // Si se llega al final del archivo antes, hay un error
                     if (sig == EOF) {
-                        errorString();
+                        error_string();
                         return 1;
                     }
                 } else if (estado == 1) {
                     // Caracteres de escape válidos
                     if (sig != 'a' && sig != 'b' && sig !='f' && sig != 'n' && sig != 'r' &&
                         sig != 't' && sig != 'v' && sig != '\\' && sig != '"' & sig != '\'') {
-                        errorString();
+                        error_string();
                         return 1;
                     // Si se llega al final del archivo antes, hay un error
                     } else if (sig == EOF) {
-                        errorString();
+                        error_string();
                         return 1;
                     } else {
                         estado = 0;
@@ -338,7 +335,7 @@ int _procesarHexadecimal(contenedor *c) {
                 estado = 2;
             } else {
                 // Si no hay digito HEX o _
-                errorHexadecimal();
+                error_hexadecimal();
                 return 1;
             }
         // Se ha leído un dígito HEX
@@ -356,7 +353,7 @@ int _procesarHexadecimal(contenedor *c) {
         } else if (estado == 2) {
             if (!isxdigit(sig)) {
                 // No se puede acabar en _
-                errorHexadecimal();
+                error_hexadecimal();
                 return 1;
             } else {
                 estado = 1;

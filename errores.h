@@ -1,12 +1,11 @@
-//
-// Created by ignacio on 21/02/25.
-//
 
 #ifndef P1_COMPGO_ERRORES_H
 #define P1_COMPGO_ERRORES_H
 
-void errorString();
+void error_string();
 
-void errorHexadecimal();
+void error_hexadecimal();
+
+void error_fichero();
 
 #endif //P1_COMPGO_ERRORES_H

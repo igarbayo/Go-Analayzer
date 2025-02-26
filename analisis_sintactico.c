@@ -1,6 +1,4 @@
-//
-// Created by ignacio on 19/02/25.
-//
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +10,7 @@ void iniciar_analisis(char *nombre_fichero) {
 
     iniciar_analisis_lexico(nombre_fichero);
 
+    /*
     do {
        c = sig_comp_lexico();
        if (c.comp_lexico != FINFICHERO) {
@@ -19,4 +18,5 @@ void iniciar_analisis(char *nombre_fichero) {
        }
        free(c.lexema);
     } while (c.comp_lexico != FINFICHERO);
+    */
 }

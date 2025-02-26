@@ -1,6 +1,4 @@
-//
-// Created by ignacio on 21/02/25.
-//
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +16,7 @@ int main(int argc, char **argv) {
 
     iniciar_analisis(argv[1]);
 
-    imprimir_tabla();
+    //imprimir_tabla();
     eliminar_tabla();
 
     return 0;

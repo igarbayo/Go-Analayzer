@@ -21,7 +21,7 @@
 - se puede utilizar un doble centinela.
 - la mayor parte de las decisiones sobre el sistema de entrada se tomarán en función
   de la eficiencia computacional (primero, tiempo de cómputo; segundo, memoria dis-
-  ponible, que en este caso es un bien escaso.
+  ponible, que en este caso es un bien escaso).
 - asi, se gestionan de forma transparente tamaños arbitrarios de la fuente de datos.
 - esto es una ventaja muy importante de este tipo de estructura de datos.
 - el sistema de "dos listas" se puede implementar con dos arrays/lista enlazada (igual

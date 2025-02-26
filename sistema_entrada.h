@@ -1,17 +1,29 @@
-//
-// Created by ignacio on 21/02/25.
-//
 
 #ifndef P1_COMPGO_SISTEMA_ENTRADA_H
 #define P1_COMPGO_SISTEMA_ENTRADA_H
 
 #include "definiciones.h"
 
+
+// inicialmente, será muy grande
+// luego, se va variando para pruebas
+#define TAMBLOQUE 8
+#define FINBLOQUE '\0'
+
+// Creación del tipo de dato
+typedef struct {
+    char array_fisico[2*TAMBLOQUE];
+    char *inicio;
+    char *delantero;
+} centinela;
+
 /**
  * Inicia el sistema de entrada
  * @param fichero con el código fuente
+ * @return 1 si hay error al cargar el fichero
+ * @return 0 en otro caso
  */
-void iniciar_sistema_entrada(char* fichero);
+int iniciar_sistema_entrada(char* nombre_fichero);
 
 /**
  * Obtiene el siguiente carácter

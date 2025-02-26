@@ -1,11 +1,16 @@
-//
-// Created by ignacio on 21/02/25.
-//
 
-void errorString() {
+
+#include <stdio.h>
+#include <stdlib.h>
+
+void error_string() {
 
 }
 
-void errorHexadecimal() {
+void error_hexadecimal() {
 
+}
+
+void error_fichero() {
+    printf("Error. No se puede leer el fichero\n");
 }
