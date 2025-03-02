@@ -104,7 +104,7 @@
   en el analizador léxico porqiue hacer un realloc al leer cada carácter nuevo es una
   operación MUY costosa.
 
-- cuando un lexema el tamaño máximo, que es el tamaño de bloque - 1. al devolver error,
+- cuando un lexema excede el tamaño máximo, que es el tamaño de bloque - 1. al devolver error,
   no se puede abortar y se tiene que seguir analizando, pues el lexema puede ser correcto.
   no genera error léxico, no tiene por qué generar error léxico o semántico. es un error
   (no se puede generar código objeto), pero es solo un error a nivel de sistema de

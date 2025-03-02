@@ -140,22 +140,88 @@ void cerrar_sistema_entrada() {
 }
 
 char sig_caracter() {
-    char c;
-    return c;
+    // Si hay que cargar un bloque
+    if (*cent.delantero == FINBLOQUE) {
+        _cargar_bloque();
+    }
+    // Si se ha terminado el procesamiento
+    if (*cent.delantero == EOF) {
+        return EOF;
+    }
+    // Ninguna de las anteriores
+    char caracter = *cent.delantero;
+    _avanzar_delantero(1);
+    return caracter;
 }
 
 void copiar_lexema(contenedor *c) {
+    // Calcular la longitud del lexema (excluyendo el último carácter)
+    int longitud = cent.delantero - cent.inicio;
 
+    // Verificar si el lexema excede el tamaño máximo permitido
+    if (longitud >= TAMBLOQUE - 1) {
+        // Truncar el lexema a los últimos TAMBLOQUE - 1 caracteres
+        longitud = TAMBLOQUE - 1;
+        cent.inicio = cent.delantero - longitud;  // Ajustar inicio para truncar
+    }
+
+    // Reservar memoria para el lexema (longitud + 1 para el carácter nulo)
+    char* lexema = (char*) malloc((longitud + 1) * sizeof(char));
+    if (lexema == NULL) {
+        error_memoria();
+        c->lexema = NULL;
+        // Finalizamos si no se puede reservar memoria
+        return;
+    }
+
+    // Copiar los caracteres desde inicio hasta delantero (excluyendo el último)
+    for (int i = 0; i < longitud; i++) {
+        lexema[i] = *(cent.inicio + i);
+    }
+
+    // Añadir el carácter nulo al final
+    lexema[longitud] = '\0';
+
+    c->lexema = lexema;
 }
 
 void devolver_un_caracter() {
+    // Si delantero ya está al inicio del array físico, no podemos retroceder
+    if (cent.delantero == cent.array_fisico) {
+        return;  // No hay más caracteres para retroceder
+    }
 
+    // Retroceder delantero una posición
+    cent.delantero--;
+
+    // Si delantero apunta a FINBLOQUE, retroceder al último carácter válido del bloque anterior
+    if (*cent.delantero == FINBLOQUE) {
+        if (cent.delantero == &cent.array_fisico[TAMBLOQUE - 1]) {
+            // Si estamos en el FINBLOQUE del bloque A, retroceder al último carácter del bloque B
+            cent.delantero = &cent.array_fisico[2 * TAMBLOQUE - 2];
+        } else if (cent.delantero == &cent.array_fisico[2 * TAMBLOQUE - 1]) {
+            // Si estamos en el FINBLOQUE del bloque B, retroceder al último carácter del bloque A
+            cent.delantero = &cent.array_fisico[TAMBLOQUE - 2];
+        }
+    }
 }
 
 void devolver_dos_caracteres() {
-
+    devolver_un_caracter();
+    devolver_un_caracter();
 }
 
 void ignorar_caracter() {
+    // Si delantero apunta a FINBLOQUE, cargar el siguiente bloque
+    if (*cent.delantero == FINBLOQUE) {
+        _cargar_bloque();
+    }
 
+    // Si delantero apunta a EOF, no hacemos nada
+    if (*cent.delantero == EOF) {
+        return;
+    }
+
+    // Avanzar delantero una posición
+    _avanzar_delantero(1);
 }

@@ -32,15 +32,25 @@ int iniciar_sistema_entrada(char* nombre_fichero);
 char sig_caracter();
 
 /**
- * Acepta el lexema procesándose actualmente
- * @param c contenedor con el lexema
+ * Copia el lexema procesándose actualmente
+ * @param c contenedor donde copiar el lexema
  */
 void copiar_lexema(contenedor *c);
 
+/**
+ * Retrocede el procesamiento de un carácter
+ */
 void devolver_un_caracter();
 
+/**
+ * Retrocede el procesamiento de dos caracteres
+ */
 void devolver_dos_caracteres();
 
+/**
+ * Ignora el siguiente carácter
+ * Similar a sig_caracter() pero sin devolver nada
+ */
 void ignorar_caracter();
 
 #endif //P1_COMPGO_SISTEMA_ENTRADA_H
