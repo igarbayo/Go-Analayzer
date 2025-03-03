@@ -53,7 +53,7 @@ void _cargar_bloque() {
         // Cargar en el bloque B
         for (int i = TAMBLOQUE; i < 2 * TAMBLOQUE - 1; i++) {
             cent.array_fisico[i] = _cargar_caracter();
-            printf("%d\t%c\n", i, cent.array_fisico[i]);
+            //printf("%d\t%c\n", i, cent.array_fisico[i]);
             // Parar al llegar al fin de fichero
             if (cent.array_fisico[i] == EOF) {
                 break;
@@ -68,7 +68,7 @@ void _cargar_bloque() {
         // Cargar en el bloque A
         for (int i = 0; i < TAMBLOQUE - 1; i++) {
             cent.array_fisico[i] = _cargar_caracter();
-            printf("%d\t%c\n", i, cent.array_fisico[i]);
+            //printf("%d\t%c\n", i, cent.array_fisico[i]);
             // Parar al llegar al fin de fichero
             if (cent.array_fisico[i] == EOF) {
                 break;
@@ -127,7 +127,7 @@ int iniciar_sistema_entrada(char* nombre_fichero) {
 
     // Cargar el primer bloque
     _cargar_bloque();
-    _imprimir_bloques();
+    //_imprimir_bloques();
     return 0;
 }
 
