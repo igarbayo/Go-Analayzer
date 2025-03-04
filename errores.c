@@ -4,17 +4,10 @@
 #include <stdlib.h>
 
 void _imprimir_error_lexico(const char* mensaje, int linea, int columna) {
-    printf("Error léxico: %s\n", mensaje);
-    printf("Línea %d, columna %d:\n", linea, columna);
-
-    // Imprimir un indicador de la posición del error
-    for (int i = 0; i < columna + 4; i++) {
-        printf(" ");
-    }
-    printf("^\n");
-
+    printf("\tError léxico: %s\n", mensaje);
+    printf("\tLínea %d, columna %d:\n", linea, columna);
     // Imprimir una sugerencia (opcional)
-    printf("Sugerencia: Revise el carácter o símbolo en la posición indicada.\n");
+    printf("\tSugerencia: Revise el carácter o símbolo en la posición indicada.\n");
 }
 
 void error_string(int linea, int columna) {
@@ -23,6 +16,14 @@ void error_string(int linea, int columna) {
 
 void error_hexadecimal(int linea, int columna) {
     _imprimir_error_lexico("Hexadecimal", linea, columna);
+}
+
+void error_entero(int linea, int columna) {
+    _imprimir_error_lexico("Integer", linea, columna);
+}
+
+void error_float(int linea, int columna) {
+    _imprimir_error_lexico("Float", linea, columna);
 }
 
 void error_fichero() {

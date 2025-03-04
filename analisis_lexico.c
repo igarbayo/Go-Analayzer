@@ -31,7 +31,7 @@ void _vaciar_contenedor();
 void _procesarComentario();
 
 /**
- * Reconoce un identificador
+ * Reconoce un identificador y lo inserta en la TS
  */
 void _procesarIdentificador();
 
@@ -50,7 +50,7 @@ void _procesarOperador(char primerCaracter);
  */
 int _procesarStringRune(char separador);
 
-int _procesarNumero();
+int _procesarNumero(char primerCaracter);
 
 /**
  * Procesa un número Hexadecimal. Se utiliza en _procesarNumero()
@@ -80,7 +80,7 @@ contenedor sig_comp_lexico() {
         if (isalpha(sig) || sig == '_') {
             _procesarIdentificador();
         } else if (isdigit(sig) || sig == '.') {
-            _procesarNumero();
+            _procesarNumero(sig);
         } else if (sig == '`' || sig == '"') {
             _procesarStringRune(sig);
         } else if (sig == '/') {
@@ -336,8 +336,120 @@ int _procesarStringRune(char separador) {
     return 0;
 }
 
-int _procesarNumero() {
-    return 0;
+int _procesarNumero(char primerCaracter) {
+    char sig = primerCaracter;
+    int estado = 0;
+
+    while (estado != FIN_COMPONENTE) {
+        switch (estado) {
+            case 0:
+                if (sig == '0') {
+                    estado = 1; // Puede ser decimal 0, binario, octal o hexadecimal
+                } else if (isdigit(sig)) {
+                    estado = 10; // Decimal
+                } else {
+                    error_entero(linea, columna);
+                    return 1; // Error
+                }
+                break;
+            case 1:
+                if (sig == 'b' || sig == 'B') estado = 2; // Binario
+                else if (sig == 'o' || sig == 'O') estado = 3; // Octal
+                else if (sig == 'x' || sig == 'X') {
+                    // Hexadecimal
+                    _procesarHexadecimal();
+                } else if (isdigit(sig)) estado = 10; // Decimal con ceros iniciales
+                else {
+                    // Es un entero 0
+                    devolver_un_caracter();
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = INT;
+                }
+                break;
+            case 2: // Binario
+                if (sig == '_') break;
+                if (sig == '0' || sig == '1') estado = 2;
+                else {
+                    devolver_un_caracter();
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = BINARY;
+                }
+                break;
+            case 3: // Octal
+                if (sig == '_') break;
+                if (sig >= '0' && sig <= '7') estado = 3;
+                else {
+                    devolver_un_caracter();
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = OCTAL;
+                }
+                break;
+            case 10: // Decimal normal
+                if (sig == '_') break;
+                if (isdigit(sig)) estado = 10;
+                else if (sig == '.') {
+                    estado = 20;
+                }
+                else if (sig == 'e' || sig == 'E') {
+                    estado = 30;
+                }
+                else {
+                    devolver_un_caracter();
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = INT;
+                }
+                break;
+            case 20: // Parte fraccionaria de decimal
+                if (isdigit(sig)) estado = 21;
+                else {
+                    devolver_un_caracter();
+                    error_float(linea, columna);
+                    return 1;
+                }
+                break;
+            case 21:
+                if (sig == '_') break;
+                if (isdigit(sig)) estado = 21;
+                else if (sig == 'e' || sig == 'E') estado = 30;
+                else {
+                    devolver_un_caracter();
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = FLOAT;
+                }
+                break;
+            case 30: // Exponente
+                if (sig == '+' || sig == '-') estado = 31;
+                else if (isdigit(sig)) estado = 32;
+                else {
+                    devolver_un_caracter();
+                    error_float(linea, columna);
+                    return 1;
+                }
+                break;
+            case 31:
+                if (isdigit(sig)) estado = 32;
+                else {
+                    devolver_un_caracter();
+                    error_float(linea, columna);
+                    return 1;
+                }
+                break;
+            case 32:
+                if (sig == '_') break;
+                if (isdigit(sig)) estado = 32;
+                else {
+                    devolver_un_caracter();
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = FLOAT;
+                }
+                break;
+        }
+        if (estado != FIN_COMPONENTE) {
+            sig = sig_caracter();
+        }
+    }
+    copiar_lexema(&c);
+
 }
 
 int _procesarHexadecimal() {
@@ -346,37 +458,43 @@ int _procesarHexadecimal() {
 
     while (estado != FIN_COMPONENTE) {
         sig = sig_caracter();
-        // Comienzo de la lectura
-        if (estado == 0) {
-            if (isxdigit(sig)) {
-                estado = 1;
-            } else if (sig == '_') {
-                estado = 2;
-            } else {
-                // Si no hay digito HEX o _
-                error_hexadecimal(linea, columna);
-                return 1;
-            }
-        // Se ha leído un dígito HEX
-        } else if (estado == 1) {
-            if (!isxdigit(sig)) {
-                if (sig == '_') {
+        switch (estado) {
+            case 0:
+                // Comienzo de la lectura
+                if (isxdigit(sig)) {
+                    estado = 1;
+                } else if (sig == '_') {
                     estado = 2;
                 } else {
-                    // Si ya ha acabado el literal HEX
-                    estado = FIN_COMPONENTE;
-                    (c.comp_lexico) = HEX;
+                    // Si no hay digito HEX o _
+                    error_hexadecimal(linea, columna);
+                    return 1;
                 }
-            }
-        // Se ha leído una _
-        } else if (estado == 2) {
-            if (!isxdigit(sig)) {
-                // No se puede acabar en _
-                error_hexadecimal(linea, columna);
-                return 1;
-            } else {
-                estado = 1;
-            }
+                break;
+            case 1:
+                // Se ha leído un dígito HEX
+                if (!isxdigit(sig)) {
+                    if (sig == '_') {
+                        estado = 2;
+                    } else {
+                        // Si ya ha acabado el literal HEX
+                        estado = FIN_COMPONENTE;
+                        (c.comp_lexico) = HEX;
+                    }
+                }
+                break;
+            case 2:
+                // Se ha leído una _
+                if (!isxdigit(sig)) {
+                    // No se puede acabar en _
+                    error_hexadecimal(linea, columna);
+                    return 1;
+                } else {
+                    estado = 1;
+                }
+                break;
+            default:
+                break;
         }
     }
 

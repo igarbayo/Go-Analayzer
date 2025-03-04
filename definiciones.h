@@ -70,6 +70,8 @@ typedef struct {
 #define FLOAT 375
 #define HEX 376
 #define IMAGINARY 377
+#define BINARY 378
+#define OCTAL 380
 
 // More literals
 #define STRING 379
