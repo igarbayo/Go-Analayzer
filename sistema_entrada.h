@@ -7,7 +7,7 @@
 
 // inicialmente, será muy grande
 // luego, se va variando para pruebas
-#define TAMBLOQUE 8
+#define TAMBLOQUE 32
 #define FINBLOQUE '\0'
 
 // Creación del tipo de dato

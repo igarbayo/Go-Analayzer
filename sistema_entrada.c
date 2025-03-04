@@ -156,7 +156,24 @@ char sig_caracter() {
 
 void copiar_lexema(contenedor *c) {
     // Calcular la longitud del lexema (excluyendo el último carácter)
-    int longitud = cent.delantero - cent.inicio;
+    int longitud = 0;
+        // Los dos en A
+    if (cent.inicio < (cent.array_fisico + TAMBLOQUE) &&
+        cent.delantero < (cent.array_fisico + TAMBLOQUE)) {
+        longitud = cent.delantero - cent.inicio;
+        // Inicio en A, Delantero en B
+    } else if (cent.inicio < (cent.array_fisico + TAMBLOQUE)) {
+        longitud = cent.delantero - cent.inicio - 1;
+        // Inicio en B, Delantero en A
+    } else if (cent.delantero < (cent.array_fisico + TAMBLOQUE)) {
+        // Calcular la parte del bloque B + la parte del bloque A
+        int longitud_B = &cent.array_fisico[2*TAMBLOQUE] - cent.inicio;
+        int longitud_A = cent.delantero - &cent.array_fisico[0];
+        longitud = longitud_B + longitud_A;
+        // Los dos en B
+    } else {
+        longitud = cent.delantero - cent.inicio;
+    }
 
     // Verificar si el lexema excede el tamaño máximo permitido
     if (longitud >= TAMBLOQUE - 1) {
@@ -175,13 +192,52 @@ void copiar_lexema(contenedor *c) {
     }
 
     // Copiar los caracteres desde inicio hasta delantero (excluyendo el último)
-    for (int i = 0; i < longitud; i++) {
-        lexema[i] = *(cent.inicio + i);
+    // Hay que manejar los casos donde empieza en A y acaba en B y viceversa
+        // Los dos en A
+    if (cent.inicio < (cent.array_fisico + TAMBLOQUE) &&
+        cent.delantero < (cent.array_fisico + TAMBLOQUE)) {
+        // Caso 1: Inicio en A, Delantero en A
+        for (int i = 0; i < longitud; i++) {
+            lexema[i] = *(cent.inicio + i);
+        }
+    } else if (cent.inicio < (cent.array_fisico + TAMBLOQUE)) {
+        // Caso 2: Inicio en A, Delantero en B
+        int longitud_A = (cent.array_fisico + TAMBLOQUE-1) - cent.inicio;
+        int longitud_B = cent.delantero - (cent.array_fisico + TAMBLOQUE);
+
+        // Copiar la parte del bloque A
+        for (int i = 0; i < longitud_A; i++) {
+            lexema[i] = *(cent.inicio + i);
+        }
+
+        // Copiar la parte del bloque B
+        for (int i = 0; i < longitud_B; i++) {
+            lexema[longitud_A + i] = *(cent.array_fisico + TAMBLOQUE + i);
+        }
+    } else if (cent.delantero < (cent.array_fisico + TAMBLOQUE)) {
+        // Caso 3: Inicio en B, Delantero en A
+        int longitud_B = (cent.array_fisico + 2 * TAMBLOQUE) - cent.inicio;
+        int longitud_A = cent.delantero - cent.array_fisico;
+
+        // Copiar la parte del bloque B
+        for (int i = 0; i < longitud_B; i++) {
+            lexema[i] = *(cent.inicio + i);
+        }
+
+        // Copiar la parte del bloque A
+        for (int i = 0; i < longitud_A; i++) {
+            lexema[longitud_B + i] = *(cent.array_fisico + i);
+        }
+    } else {
+        // Caso 4: Inicio en B, Delantero en B
+        for (int i = 0; i < longitud; i++) {
+            lexema[i] = *(cent.inicio + i);
+        }
     }
 
     // Añadir el carácter nulo al final
     lexema[longitud] = '\0';
-
+    cent.inicio = cent.delantero;
     c->lexema = lexema;
 }
 
@@ -223,5 +279,6 @@ void ignorar_caracter() {
     }
 
     // Avanzar delantero una posición
-    _avanzar_delantero(1);
+    //_avanzar_delantero(1);
+    cent.inicio = cent.delantero;
 }

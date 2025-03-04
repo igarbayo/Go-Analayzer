@@ -8,18 +8,19 @@
 
 void iniciar_analisis(char *nombre_fichero) {
     contenedor c;
+    int i=0;
 
     iniciar_analisis_lexico(nombre_fichero);
 
-    /*
+
     do {
        c = sig_comp_lexico();
        if (c.comp_lexico != FINFICHERO) {
             printf("<%d, %s>\n", c.comp_lexico, c.lexema);
        }
-       free(c.lexema);
-    } while (c.comp_lexico != FINFICHERO);
-    */
+       i++;
+    } while (i<200);
+
 
     /*
     printf("\n");

@@ -15,6 +15,8 @@
 
 // Variable global (se le asignan valores iniciales)
 contenedor c = {-1, NULL};
+int linea = 0;
+int columna = 0;
 
 // Funciones privadas (cabeceras)
 
@@ -71,11 +73,10 @@ void iniciar_analisis_lexico(char* fichero) {
 }
 
 contenedor sig_comp_lexico() {
-    char sig = '0';
+    char sig = sig_caracter();
     _vaciar_contenedor();
 
-    while (sig != EOF) {
-        sig = sig_caracter();
+    if (sig != EOF) {
         if (isalpha(sig) || sig == '_') {
             _procesarIdentificador();
         } else if (isdigit(sig) || sig == '.') {
@@ -90,15 +91,16 @@ contenedor sig_comp_lexico() {
                    sig == ':' || sig == ',' || sig == ';' || sig == '(' || sig == ')' || sig == '[' ||
                    sig == ']' || sig == '{' || sig == '}') {
             _procesarOperador(sig);
-            // El final del archivo
-        } else if (sig == EOF) {
-            c.comp_lexico = EOF;
-            c.lexema = NULL;
             // Si no es ninguno de los anteriores
         } else {
             ignorar_caracter();
+            // Recursividad al ignorar caracteres (hacer de otra forma)
+            sig_comp_lexico();
         }
-        _vaciar_contenedor();
+        // El final del archivo
+    } else {
+        c.comp_lexico = EOF;
+        c.lexema = NULL;
     }
 
     return c;
@@ -261,6 +263,7 @@ void _procesarOperador(char primerCaracter) {
         (c.comp_lexico) = (int) primerCaracter;
         devolver_dos_caracteres();
     }
+    copiar_lexema(&c);
 
 }
 
@@ -279,7 +282,7 @@ int _procesarStringRune(char separador) {
                 }
                 // Si se llega al final del archivo antes, hay un error
                 if (sig == EOF) {
-                    error_string();
+                    error_string(linea, columna);
                     return 1;
                 }
             }
@@ -300,7 +303,7 @@ int _procesarStringRune(char separador) {
                         }
                         // Si se llega al final del archivo antes, hay un error
                         if (sig == EOF) {
-                            error_string();
+                            error_string(linea, columna);
                             return 1;
                         }
                         break;
@@ -308,11 +311,11 @@ int _procesarStringRune(char separador) {
                         // Caracteres de escape válidos
                         if (sig != 'a' && sig != 'b' && sig !='f' && sig != 'n' && sig != 'r' &&
                             sig != 't' && sig != 'v' && sig != '\\' && sig != '"' & sig != '\'') {
-                            error_string();
+                            error_string(linea, columna);
                             return 1;
                             // Si se llega al final del archivo antes, hay un error
                         } else if (sig == EOF) {
-                            error_string();
+                            error_string(linea, columna);
                             return 1;
                         } else {
                             estado = 0;
@@ -351,7 +354,7 @@ int _procesarHexadecimal() {
                 estado = 2;
             } else {
                 // Si no hay digito HEX o _
-                error_hexadecimal();
+                error_hexadecimal(linea, columna);
                 return 1;
             }
         // Se ha leído un dígito HEX
@@ -369,7 +372,7 @@ int _procesarHexadecimal() {
         } else if (estado == 2) {
             if (!isxdigit(sig)) {
                 // No se puede acabar en _
-                error_hexadecimal();
+                error_hexadecimal(linea, columna);
                 return 1;
             } else {
                 estado = 1;
