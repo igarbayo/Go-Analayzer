@@ -167,7 +167,7 @@ void copiar_lexema(contenedor *c) {
         // Inicio en B, Delantero en A
     } else if (cent.delantero < (cent.array_fisico + TAMBLOQUE)) {
         // Calcular la parte del bloque B + la parte del bloque A
-        int longitud_B = &cent.array_fisico[2*TAMBLOQUE] - cent.inicio;
+        int longitud_B = &cent.array_fisico[2*TAMBLOQUE] - cent.inicio - 1;
         int longitud_A = cent.delantero - &cent.array_fisico[0];
         longitud = longitud_B + longitud_A;
         // Los dos en B
@@ -216,7 +216,7 @@ void copiar_lexema(contenedor *c) {
         }
     } else if (cent.delantero < (cent.array_fisico + TAMBLOQUE)) {
         // Caso 3: Inicio en B, Delantero en A
-        int longitud_B = (cent.array_fisico + 2 * TAMBLOQUE) - cent.inicio;
+        int longitud_B = (cent.array_fisico + 2 * TAMBLOQUE) - cent.inicio - 1;
         int longitud_A = cent.delantero - cent.array_fisico;
 
         // Copiar la parte del bloque B
@@ -239,6 +239,10 @@ void copiar_lexema(contenedor *c) {
     lexema[longitud] = '\0';
     cent.inicio = cent.delantero;
     c->lexema = lexema;
+}
+
+void ignorar_lexema() {
+    cent.inicio = cent.delantero;
 }
 
 void devolver_un_caracter() {

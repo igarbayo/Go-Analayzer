@@ -7,7 +7,7 @@
 
 // inicialmente, será muy grande
 // luego, se va variando para pruebas
-#define TAMBLOQUE 32
+#define TAMBLOQUE 64
 #define FINBLOQUE '\0'
 
 // Creación del tipo de dato
@@ -36,6 +36,12 @@ char sig_caracter();
  * @param c contenedor donde copiar el lexema
  */
 void copiar_lexema(contenedor *c);
+
+/**
+ * Ignora el contenido de un lexema.
+ * Avanza inicio a delantero
+ */
+void ignorar_lexema();
 
 /**
  * Retrocede el procesamiento de un carácter

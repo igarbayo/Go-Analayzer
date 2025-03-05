@@ -129,37 +129,45 @@ void _procesarComentario() {
     // segundoCaracter puede ser / (empieza por //) o * (empieza por / y * y acaba en * seguido de/)
     char segundoCaracter = sig_caracter();
 
-    // Tipo "//"
-    if (segundoCaracter == '/') {
-        sig = sig_caracter();
-        while (sig != '\n') {
+    switch (segundoCaracter) {
+        case '/':
+            // Tipo "//"
             sig = sig_caracter();
-        }
+            while (sig != '\n') {
+                sig = sig_caracter();
+            }
+            break;
+        case '*':
+            // Tipo "/**/"
+            sig = sig_caracter();
+            while (estado != FIN_COMPONENTE) {
+                switch (estado) {
+                    case 0:
+                        if (sig == '*') {
+                            estado = 1;
+                        }
+                        break;
+                    case 1:
+                        if (sig == '/') {
+                            estado = FIN_COMPONENTE;
+                        } else {
+                            estado = 0;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                sig = sig_caracter();
+            }
+            break;
+        default:
+            devolver_un_caracter();
+            _procesarOperador('/');
+            break;
+
     }
 
-    // Tipo "/**/"
-    if (segundoCaracter == '*') {
-        sig = sig_caracter();
-        while (estado != FIN_COMPONENTE) {
-            switch (estado) {
-                case 0:
-                    if (sig == '*') {
-                        estado = 1;
-                    }
-                    break;
-                case 1:
-                    if (sig == '/') {
-                        estado = FIN_COMPONENTE;
-                    } else {
-                        estado = 0;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            sig = sig_caracter();
-        }
-    }
+    ignorar_lexema();
 }
 
 void _procesarIdentificador() {
@@ -347,6 +355,8 @@ int _procesarNumero(char primerCaracter) {
                     estado = 1; // Puede ser decimal 0, binario, octal o hexadecimal
                 } else if (isdigit(sig)) {
                     estado = 10; // Decimal
+                } else if (sig == '.') {
+                    estado = 19; // Float empezando con punto
                 } else {
                     error_entero(linea, columna);
                     return 1; // Error
@@ -356,11 +366,10 @@ int _procesarNumero(char primerCaracter) {
                 if (sig == 'b' || sig == 'B') estado = 2; // Binario
                 else if (sig == 'o' || sig == 'O') estado = 3; // Octal
                 else if (sig == 'x' || sig == 'X') {
-                    // Hexadecimal
-                    _procesarHexadecimal();
+                    _procesarHexadecimal(); // Hexadecimal
+                    return 0;
                 } else if (isdigit(sig)) estado = 10; // Decimal con ceros iniciales
                 else {
-                    // Es un entero 0
                     devolver_un_caracter();
                     estado = FIN_COMPONENTE;
                     c.comp_lexico = INT;
@@ -389,18 +398,29 @@ int _procesarNumero(char primerCaracter) {
                 if (isdigit(sig)) estado = 10;
                 else if (sig == '.') {
                     estado = 20;
-                }
-                else if (sig == 'e' || sig == 'E') {
+                } else if (sig == 'e' || sig == 'E') {
                     estado = 30;
-                }
-                else {
+                } else if (sig == 'i') {
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = IMAGINARY;
+                } else {
                     devolver_un_caracter();
                     estado = FIN_COMPONENTE;
                     c.comp_lexico = INT;
                 }
                 break;
-            case 20: // Parte fraccionaria de decimal
+            case 19: // inicio de .123
                 if (isdigit(sig)) estado = 21;
+                else if (sig == 'e' || sig == 'E') estado = 30;
+                else if (isalpha(sig)) {
+                    devolver_un_caracter();
+                    _procesarOperador('.');
+                    return 1;
+                }
+                break;
+            case 20: // Parte fraccionaria de decimal o inicio de .123
+                if (isdigit(sig)) estado = 21;
+                else if (sig == 'e' || sig == 'E') estado = 30;
                 else {
                     devolver_un_caracter();
                     error_float(linea, columna);
@@ -411,7 +431,10 @@ int _procesarNumero(char primerCaracter) {
                 if (sig == '_') break;
                 if (isdigit(sig)) estado = 21;
                 else if (sig == 'e' || sig == 'E') estado = 30;
-                else {
+                else if (sig == 'i') {
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = IMAGINARY;
+                } else {
                     devolver_un_caracter();
                     estado = FIN_COMPONENTE;
                     c.comp_lexico = FLOAT;
@@ -419,14 +442,14 @@ int _procesarNumero(char primerCaracter) {
                 break;
             case 30: // Exponente
                 if (sig == '+' || sig == '-') estado = 31;
-                else if (isdigit(sig)) estado = 32;
+                else if (isdigit(sig)) estado = 32; // Permitir 1.e0
                 else {
                     devolver_un_caracter();
                     error_float(linea, columna);
                     return 1;
                 }
                 break;
-            case 31:
+            case 31: // Signo después de exponente
                 if (isdigit(sig)) estado = 32;
                 else {
                     devolver_un_caracter();
@@ -434,10 +457,35 @@ int _procesarNumero(char primerCaracter) {
                     return 1;
                 }
                 break;
-            case 32:
+            case 32: // Dígitos en el exponente
                 if (sig == '_') break;
                 if (isdigit(sig)) estado = 32;
+                else if (sig == 'i') { // Para casos como 1.e0+0i
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = IMAGINARY;
+                } else if (sig == '+' || sig == '-') { // Para manejar 1.e0+0
+                    estado = 40;
+                } else {
+                    devolver_un_caracter();
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = FLOAT;
+                }
+                break;
+            case 40: // Manejo del signo después del exponente (como en 1.e0+0i)
+                if (isdigit(sig)) estado = 41;
                 else {
+                    devolver_un_caracter();
+                    error_float(linea, columna);
+                    return 1;
+                }
+                break;
+            case 41: // Dígitos después del signo en el exponente
+                if (sig == '_') break;
+                if (isdigit(sig)) estado = 41;
+                else if (sig == 'i') { // Para casos como 1.e0+0i
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = IMAGINARY;
+                } else {
                     devolver_un_caracter();
                     estado = FIN_COMPONENTE;
                     c.comp_lexico = FLOAT;
@@ -449,8 +497,11 @@ int _procesarNumero(char primerCaracter) {
         }
     }
     copiar_lexema(&c);
-
+    return 0;
 }
+
+
+
 
 int _procesarHexadecimal() {
     char sig;

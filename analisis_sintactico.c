@@ -15,11 +15,11 @@ void iniciar_analisis(char *nombre_fichero) {
 
     do {
        c = sig_comp_lexico();
-       if (c.comp_lexico != FINFICHERO) {
+       if (c.comp_lexico != FINFICHERO /*&& c.lexema != NULL*/) {
             printf("<%d, \"%s\">\n", c.comp_lexico, c.lexema);
        }
        i++;
-    } while (i<200);
+    } while (c.comp_lexico != FINFICHERO);
 
 
     /*
