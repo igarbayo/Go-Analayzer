@@ -91,6 +91,10 @@ void iniciar_analisis_lexico(char* fichero) {
     iniciar_sistema_entrada(fichero);
 }
 
+void terminar_analisis_lexico() {
+    cerrar_sistema_entrada();
+}
+
 contenedor sig_comp_lexico() {
     char sig = sig_caracter();
     _vaciar_contenedor();

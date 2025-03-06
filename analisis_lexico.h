@@ -12,6 +12,11 @@
 void iniciar_analisis_lexico(char* fichero);
 
 /**
+ *
+ */
+void terminar_analisis_lexico();
+
+/**
  * Consume un componente léxico (contenedor)
  * @return contenedor con componente léxico y lexema asociado
  */

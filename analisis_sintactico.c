@@ -20,5 +20,7 @@ void iniciar_analisis(char *nombre_fichero) {
        i++;
     } while (c.comp_lexico != FINFICHERO);
 
+    terminar_analisis_lexico();
+
 
 }

@@ -26,6 +26,11 @@ typedef struct {
 int iniciar_sistema_entrada(char* nombre_fichero);
 
 /**
+ *
+ */
+void cerrar_sistema_entrada();
+
+/**
  * Obtiene el siguiente carácter
  * @return char con el carácter siguiente
  */
