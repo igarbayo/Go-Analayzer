@@ -33,14 +33,14 @@ char _cargar_caracter() {
 void _cargar_bloque() {
     if (cent.delantero == &cent.array_fisico[TAMBLOQUE - 1]) {
         // Cargar en el bloque B
-        for (int i = TAMBLOQUE; i < 2 * TAMBLOQUE - 1; i++) {
-            cent.array_fisico[i] = _cargar_caracter();
-            //printf("%d\t%c\n", i, cent.array_fisico[i]);
-            // Parar al llegar al fin de fichero
-            if (cent.array_fisico[i] == EOF) {
-                break;
-            }
+        size_t leidos = fread(&cent.array_fisico[TAMBLOQUE], sizeof(char), TAMBLOQUE-1, fichero);
+
+        // Parar al llegar al fin de fichero
+        if (leidos < TAMBLOQUE) {
+            // Si no leímos todos los caracteres, marcar EOF en el último carácter
+            cent.array_fisico[TAMBLOQUE + leidos] = EOF;
         }
+
         // Asignar fin de bloque
         cent.array_fisico[2 * TAMBLOQUE - 1] = FINBLOQUE;
         // Avanzar delantero al inicio del bloque B
@@ -48,14 +48,14 @@ void _cargar_bloque() {
     } else if (cent.delantero == &cent.array_fisico[2 * TAMBLOQUE - 1] ||
                cent.delantero == &cent.array_fisico[0]) {
         // Cargar en el bloque A
-        for (int i = 0; i < TAMBLOQUE - 1; i++) {
-            cent.array_fisico[i] = _cargar_caracter();
-            //printf("%d\t%c\n", i, cent.array_fisico[i]);
-            // Parar al llegar al fin de fichero
-            if (cent.array_fisico[i] == EOF) {
-                break;
-            }
+        size_t leidos = fread(cent.array_fisico, sizeof(char), TAMBLOQUE - 1, fichero);
+
+        // Parar al llegar al fin de fichero
+        if (leidos < TAMBLOQUE - 1) {
+            // Si no leímos todos los caracteres, marcar EOF en el último carácter
+            cent.array_fisico[leidos] = EOF;
         }
+
         // Asignar fin de bloque
         cent.array_fisico[TAMBLOQUE - 1] = FINBLOQUE;
         // Avanzar delantero al inicio del bloque A
@@ -248,6 +248,9 @@ void devolver_un_caracter() {
     // Si delantero ya está al inicio del array físico, no podemos retroceder
     if (cent.delantero == cent.array_fisico) {
         cent.delantero = &(cent.array_fisico[2*TAMBLOQUE-2]);
+        noCargar = 1;
+    } else if (cent.delantero == &(cent.array_fisico[TAMBLOQUE])) {
+        cent.delantero = &(cent.array_fisico[TAMBLOQUE-2]);
         noCargar = 1;
     } else {
         // Retroceder delantero una posición
