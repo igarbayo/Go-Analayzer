@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+// ERRORES LÉXICOS
 void _imprimir_error_lexico(const char* mensaje, int linea, int columna) {
     printf("\tError léxico: %s\n", mensaje);
     printf("\tLínea %d, columna %d:\n", linea, columna);
@@ -26,6 +28,12 @@ void error_float(int linea, int columna) {
     _imprimir_error_lexico("Float", linea, columna);
 }
 
+void error_rune(int linea, int columna) {
+    _imprimir_error_lexico("Rune", linea, columna);
+}
+
+
+// ERRORES GENERALES
 void error_fichero() {
     printf("Error. No se puede leer el fichero\n");
 }

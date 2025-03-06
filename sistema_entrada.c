@@ -13,31 +13,11 @@ FILE *fichero;
 short noCargar=0;
 
 // Funciones privadas
-// Avanza inicio n posiciones
-void _avanzar_inicio(int n) {
-    for (int i = 0; i < n; i++) {
-        cent.inicio++;
-    }
-}
-
-// Retrocede inicio n posiciones
-void _retroceder_inicio(int n) {
-    for (int i = 0; i < n; i++) {
-        cent.inicio--;
-    }
-}
 
 // Avanza delantero n posiciones
 void _avanzar_delantero(int n) {
     for (int i = 0; i < n; i++) {
         cent.delantero++;
-    }
-}
-
-// Retrocede delantero n posiciones
-void _retroceder_delantero(int n) {
-    for (int i = 0; i < n; i++) {
-        cent.delantero--;
     }
 }
 
@@ -156,23 +136,20 @@ void cerrar_sistema_entrada() {
 char sig_caracter() {
     char caracter = EOF;
     // Si se ha terminado el procesamiento
-    if (*cent.delantero == EOF) {
-        return EOF;
-    } else {
-        if (*cent.delantero == FINBLOQUE) {
-            if (noCargar==0) {
-                // Si hay que cargar un bloque
-                _cargar_bloque();
-            } else {
-                // Si solo hay que moverse al bloque
-                _mover_bloque();
-                noCargar = 0;
-            }
+
+    if (*cent.delantero == FINBLOQUE) {
+        if (noCargar==0) {
+            // Si hay que cargar un bloque
+            _cargar_bloque();
+        } else {
+            // Si solo hay que moverse al bloque
+            _mover_bloque();
+            noCargar = 0;
         }
-        // Por defecto
-        caracter = *cent.delantero;
-        _avanzar_delantero(1);
     }
+    // Por defecto
+    caracter = *cent.delantero;
+    _avanzar_delantero(1);
     return caracter;
 }
 
@@ -267,29 +244,6 @@ void ignorar_lexema() {
     cent.inicio = cent.delantero;
 }
 
-/*void devolver_un_caracter() {
-    // Si delantero ya está al inicio del array físico, no podemos retroceder
-    if (cent.delantero == cent.array_fisico) {
-        return;  // No hay más caracteres para retroceder
-    }
-
-    // Retroceder delantero una posición
-    cent.delantero--;
-
-    // Si delantero apunta a FINBLOQUE, retroceder al último carácter válido del bloque anterior
-    if (*cent.delantero == FINBLOQUE) {
-        if (cent.delantero == &cent.array_fisico[TAMBLOQUE - 1]) {
-            // Si estamos en el FINBLOQUE del bloque A, retroceder al último carácter del bloque B
-            cent.delantero = &cent.array_fisico[2 * TAMBLOQUE - 2];
-        } else if (cent.delantero == &cent.array_fisico[2 * TAMBLOQUE - 1]) {
-            // Si estamos en el FINBLOQUE del bloque B, retroceder al último carácter del bloque A
-            cent.delantero = &cent.array_fisico[TAMBLOQUE - 2];
-        }
-    }
-}*/
-
-// AVISO
-// Se pierde un bloque al cargar otra vez
 void devolver_un_caracter() {
     // Si delantero ya está al inicio del array físico, no podemos retroceder
     if (cent.delantero == cent.array_fisico) {

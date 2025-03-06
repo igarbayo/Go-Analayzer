@@ -12,25 +12,13 @@ void iniciar_analisis(char *nombre_fichero) {
 
     iniciar_analisis_lexico(nombre_fichero);
 
-
     do {
        c = sig_comp_lexico();
-       if (c.comp_lexico != FINFICHERO /*&& c.lexema != NULL*/) {
-            printf("<%d, \"%s\">\n", c.comp_lexico, c.lexema);
+       if (c.comp_lexico != FINFICHERO && c.comp_lexico != -1) {
+            printf("%d\t\t<%d, \"%s\">\n", i, c.comp_lexico, c.lexema);
        }
        i++;
-    } while (i < 150);
-
-
-    /*
-    printf("\n");
-    char ch = '0';
-    while (ch != EOF) {
-        ch = sig_caracter();
-        printf("%c", ch);
-    }
-    printf("\n");
-    */
+    } while (c.comp_lexico != FINFICHERO);
 
 
 }

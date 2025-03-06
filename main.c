@@ -12,11 +12,16 @@ int main(int argc, char **argv) {
     }
 
     crear_tabla();
+    printf("Inicio del programa\n");
     imprimir_tabla();
+    printf("\n");
 
+    printf("Análisis léxico\n");
     iniciar_analisis(argv[1]);
+    printf("\n");
 
-    //imprimir_tabla();
+    printf("Final del programa\n");
+    imprimir_tabla();
     eliminar_tabla();
 
     return 0;
