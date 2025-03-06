@@ -49,11 +49,6 @@ void ignorar_lexema();
 void devolver_un_caracter();
 
 /**
- * Retrocede el procesamiento de dos caracteres
- */
-void devolver_dos_caracteres();
-
-/**
  * Ignora el siguiente carácter
  * Similar a sig_caracter() pero sin devolver nada
  */

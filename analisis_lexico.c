@@ -27,17 +27,20 @@ void _vaciar_contenedor();
 
 /**
  * Salta un comentario
+ * @param 
  */
 void _procesarComentario();
 
 /**
  * Reconoce un identificador y lo inserta en la TS
+ * @param 
  */
 void _procesarIdentificador();
 
 /**
  * Procesa un operador de 1 o 2 caracteres
  * @param primerCaracter del operador
+ * @param 
  */
 void _procesarOperador(char primerCaracter);
 
@@ -45,15 +48,23 @@ void _procesarOperador(char primerCaracter);
  * Procesa una String o Rune bien construida
  * No se contemplan caracteres Unicode
  * @param separador las Strings pueden empezar por ` o por "
+ * @param 
  * @return 1 si hay error de construcción
  * @return 0 si está bien construida
  */
 int _procesarStringRune(char separador);
 
+/**
+ *
+ * @param primerCaracter
+ * @param 
+ * @return
+ */
 int _procesarNumero(char primerCaracter);
 
 /**
  * Procesa un número Hexadecimal. Se utiliza en _procesarNumero()
+ * @param 
  * @return 1 si hay error de construcción
  * @return 0 si está bien construido
  */
@@ -269,7 +280,8 @@ void _procesarOperador(char primerCaracter) {
     } else {
         // Si tiene 1 solo carácter, asignamos ASCII y devolvemos dos caracteres leídos de más
         (c.comp_lexico) = (int) primerCaracter;
-        devolver_dos_caracteres();
+        devolver_un_caracter();
+        devolver_un_caracter();
     }
     copiar_lexema(&c);
 

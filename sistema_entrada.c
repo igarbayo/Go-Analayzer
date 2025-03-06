@@ -10,6 +10,8 @@
 centinela cent;
 FILE *fichero;
 
+short noCargar=0;
+
 // Funciones privadas
 // Avanza inicio n posiciones
 void _avanzar_inicio(int n) {
@@ -81,6 +83,18 @@ void _cargar_bloque() {
     }
 }
 
+// Solo desplaza el bloque, sin cargar
+void _mover_bloque() {
+    if (cent.delantero == &cent.array_fisico[TAMBLOQUE - 1]) {
+        // Avanzar delantero al inicio del bloque B
+        cent.delantero = &cent.array_fisico[TAMBLOQUE];
+    } else if (cent.delantero == &cent.array_fisico[2 * TAMBLOQUE - 1] ||
+               cent.delantero == &cent.array_fisico[0]) {
+        // Avanzar delantero al inicio del bloque A
+        cent.delantero = &cent.array_fisico[0];
+    }
+}
+
 void _imprimir_bloques() {
     printf("Contenido del bloque A:\n");
     for (int i = 0; i < TAMBLOQUE; i++) {
@@ -140,17 +154,25 @@ void cerrar_sistema_entrada() {
 }
 
 char sig_caracter() {
-    // Si hay que cargar un bloque
-    if (*cent.delantero == FINBLOQUE) {
-        _cargar_bloque();
-    }
+    char caracter = EOF;
     // Si se ha terminado el procesamiento
     if (*cent.delantero == EOF) {
         return EOF;
+    } else {
+        if (*cent.delantero == FINBLOQUE) {
+            if (noCargar==0) {
+                // Si hay que cargar un bloque
+                _cargar_bloque();
+            } else {
+                // Si solo hay que moverse al bloque
+                _mover_bloque();
+                noCargar = 0;
+            }
+        }
+        // Por defecto
+        caracter = *cent.delantero;
+        _avanzar_delantero(1);
     }
-    // Ninguna de las anteriores
-    char caracter = *cent.delantero;
-    _avanzar_delantero(1);
     return caracter;
 }
 
@@ -245,7 +267,7 @@ void ignorar_lexema() {
     cent.inicio = cent.delantero;
 }
 
-void devolver_un_caracter() {
+/*void devolver_un_caracter() {
     // Si delantero ya está al inicio del array físico, no podemos retroceder
     if (cent.delantero == cent.array_fisico) {
         return;  // No hay más caracteres para retroceder
@@ -264,17 +286,30 @@ void devolver_un_caracter() {
             cent.delantero = &cent.array_fisico[TAMBLOQUE - 2];
         }
     }
-}
+}*/
 
-void devolver_dos_caracteres() {
-    devolver_un_caracter();
-    devolver_un_caracter();
+// AVISO
+// Se pierde un bloque al cargar otra vez
+void devolver_un_caracter() {
+    // Si delantero ya está al inicio del array físico, no podemos retroceder
+    if (cent.delantero == cent.array_fisico) {
+        cent.delantero = &(cent.array_fisico[2*TAMBLOQUE-2]);
+        noCargar = 1;
+    } else {
+        // Retroceder delantero una posición
+        cent.delantero--;
+    }
 }
 
 void ignorar_caracter() {
     // Si delantero apunta a FINBLOQUE, cargar el siguiente bloque
     if (*cent.delantero == FINBLOQUE) {
-        _cargar_bloque();
+        if (noCargar==0) {
+            _cargar_bloque();
+        } else {
+            _mover_bloque();
+            noCargar = 0;
+        }
     }
 
     // Si delantero apunta a EOF, no hacemos nada

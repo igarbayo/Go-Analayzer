@@ -19,7 +19,7 @@ void iniciar_analisis(char *nombre_fichero) {
             printf("<%d, \"%s\">\n", c.comp_lexico, c.lexema);
        }
        i++;
-    } while (c.comp_lexico != FINFICHERO);
+    } while (i < 150);
 
 
     /*
