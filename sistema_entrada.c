@@ -21,14 +21,6 @@ void _avanzar_delantero(int n) {
     }
 }
 
-// Carga un carácter desde el fichero
-char _cargar_caracter() {
-    if (fichero != NULL) {
-        return (char) fgetc(fichero);
-    }
-    return EOF;
-}
-
 // Carga el siguiente bloque en el centinela
 void _cargar_bloque() {
     if (cent.delantero == &cent.array_fisico[TAMBLOQUE - 1]) {
