@@ -1,5 +1,3 @@
-
-
 #ifndef P1_COMPGO_DEFINICIONES_H
 #define P1_COMPGO_DEFINICIONES_H
 
@@ -74,12 +72,14 @@ typedef struct {
 #define BINARY_INT 378
 #define OCTAL_INT 380
 
-// More literals
+// Más literals
 #define STRING 379
 
-// End-of-file
-#define FINFICHERO 500
+// Error léxico
+#define ERRORLEXICO 400
 
+// End-of-file
+#define FINFICHERO EOF
 
 
 #endif //P1_COMPGO_DEFINICIONES_H

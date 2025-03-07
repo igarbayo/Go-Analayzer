@@ -1,10 +1,9 @@
-
-
 #ifndef P1_COMPGO_AVL_H
 #define P1_COMPGO_AVL_H
 
 #include "definiciones.h"
 
+// Typedefs necesarios para el AVL
 typedef char *tipoclave;
 typedef contenedor tipoelem;
 typedef void *avl;
@@ -56,14 +55,6 @@ avl der(avl A);
  * @param nodo nodo como argumento de salida. Vale NULL si no se encuentra cl
  */
 void buscar_nodo(avl A, tipoclave cl, tipoelem *nodo);
-
-/**
- * Verifica si un elemento está en el árbol
- * @param A árbol
- * @param e elemento
- * @return 0 si no es miembro, 1 si lo es
- */
-unsigned es_miembro(avl A, tipoelem e);
 
 /**
  * Verifica si una clave está en el árbol

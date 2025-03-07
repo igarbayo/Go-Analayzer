@@ -1,5 +1,3 @@
-
-
 #ifndef P1_COMPGO_TABLA_SIMBOLOS_H
 #define P1_COMPGO_TABLA_SIMBOLOS_H
 
@@ -25,12 +23,6 @@ void insertar_elemento(contenedor elemento);
  * @return -1 si la clave no está en la tabla
  */
 int buscar_elemento(char* clave);
-
-/**
- * Busca un elemento y, si no está, lo inserta en la TS
- * @param elemento a introducir en la tabla. Usa como clave su lexema.
- */
-void buscar_insertar_elemento(contenedor elemento);
 
 /**
  * Libera la memoria asociada a la TS

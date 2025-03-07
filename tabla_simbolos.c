@@ -1,15 +1,21 @@
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "tabla_simbolos.h"
 #include "definiciones.h"
 #include "avl.h"
+#include "errores.h"
 
+
+// Variable global
 tabla_simbolos tabla;
 
-// Funciones privadas
+// FUNCIONES PRIVADAS //////////////////////
+
+/**
+ * Imprime el contenido de la tabla en inorden
+ * @param tabla a imprimir
+ */
 void _inorden(tabla_simbolos tabla) {
     tipoelem e;
     // Recorre subárbol derecho e izquierdo de forma recursiva
@@ -22,8 +28,8 @@ void _inorden(tabla_simbolos tabla) {
     }
 }
 
+// FUNCIONES PÚBLICAS /////////////////////////
 
-// Funciones públicas (declaradas en tabla_simbolos.h)
 void crear_tabla() {
     int i=0;
     contenedor c;
@@ -73,8 +79,14 @@ void insertar_elemento(contenedor elemento) {
     contenedor aux;
     aux.comp_lexico = elemento.comp_lexico;
     aux.lexema = (char *) malloc ((strlen(elemento.lexema)+1)*sizeof(char));
-    strcpy(aux.lexema, elemento.lexema);
-    insertar(&tabla, (tipoelem) aux);
+
+    // Solo insertamos si se puede reservar la memoria
+    if (aux.lexema == NULL) {
+        error_memoria();
+    } else {
+        strcpy(aux.lexema, elemento.lexema);
+        insertar(&tabla, (tipoelem) aux);
+    }
 }
 
 int buscar_elemento(char* clave) {
@@ -86,12 +98,6 @@ int buscar_elemento(char* clave) {
         return e.comp_lexico;
     } else {
         return -1;
-    }
-}
-
-void buscar_insertar_elemento(contenedor elemento) {
-    if (buscar_elemento(elemento.lexema)==-1) {
-        insertar_elemento(elemento);
     }
 }
 

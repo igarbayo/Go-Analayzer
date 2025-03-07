@@ -1,18 +1,17 @@
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "definiciones.h"
 #include "sistema_entrada.h"
 #include "errores.h"
 
-// Variable global
+// Variables globales
 centinela cent;
 FILE *fichero;
 
+// Variable para decidir si cargar o no un bloque
 short noCargar=0;
 
-// Funciones privadas
+// FUNCIONES PRIVADAS ///////////////////////
 
 // Avanza delantero n posiciones
 void _avanzar_delantero(int n) {
@@ -55,7 +54,7 @@ void _cargar_bloque() {
     }
 }
 
-// Solo desplaza el bloque, sin cargar
+// Solo desplaza delantero de bloque, sin cargar
 void _mover_bloque() {
     if (cent.delantero == &cent.array_fisico[TAMBLOQUE - 1]) {
         // Avanzar delantero al inicio del bloque B
@@ -67,38 +66,13 @@ void _mover_bloque() {
     }
 }
 
-void _imprimir_bloques() {
-    printf("Contenido del bloque A:\n");
-    for (int i = 0; i < TAMBLOQUE; i++) {
-        if (cent.array_fisico[i] == FINBLOQUE) {
-            printf("[FINBLOQUE] ");  // Indicador de fin de bloque
-        } else if (cent.array_fisico[i] == EOF) {
-            printf("[EOF] ");  // Indicador de fin de archivo
-        } else {
-            printf("%c ", cent.array_fisico[i]);  // Carácter normal
-        }
-    }
-    printf("\n");
 
-    printf("Contenido del bloque B:\n");
-    for (int i = TAMBLOQUE; i < 2 * TAMBLOQUE; i++) {
-        if (cent.array_fisico[i] == FINBLOQUE) {
-            printf("[FINBLOQUE] ");  // Indicador de fin de bloque
-        } else if (cent.array_fisico[i] == EOF) {
-            printf("[EOF] ");  // Indicador de fin de archivo
-        } else {
-            printf("%c ", cent.array_fisico[i]);  // Carácter normal
-        }
-    }
-    printf("\n");
-}
+// FUNCIONES PÚBLICAS ////////////////
 
-
-// Funciones públicas
 int iniciar_sistema_entrada(char* nombre_fichero) {
     // Inicializar punteros
     cent.inicio = cent.array_fisico;
-    cent.delantero = cent.array_fisico;  // Corregido: inicializar delantero correctamente
+    cent.delantero = cent.array_fisico;
 
     // Marcar fin de bloques
     cent.array_fisico[TAMBLOQUE - 1] = FINBLOQUE;
@@ -113,22 +87,23 @@ int iniciar_sistema_entrada(char* nombre_fichero) {
 
     // Cargar el primer bloque
     _cargar_bloque();
-    //_imprimir_bloques();
+
+    // En caso de éxito
     return 0;
 }
 
-// Función para cerrar el sistema de entrada
 void cerrar_sistema_entrada() {
     if (fichero != NULL) {
         fclose(fichero);
-        fichero = NULL;  // Opcional: asignar NULL para evitar usos incorrectos
+        fichero = NULL;  // Asignar NULL para evitar usos incorrectos
     }
 }
 
 char sig_caracter() {
+    // Por defecto, devuelve el carácter de fin
     char caracter = EOF;
-    // Si se ha terminado el procesamiento
 
+    // Si se termina un bloque
     if (*cent.delantero == FINBLOQUE) {
         if (noCargar==0) {
             // Si hay que cargar un bloque
@@ -139,6 +114,7 @@ char sig_caracter() {
             noCargar = 0;
         }
     }
+
     // Por defecto
     caracter = *cent.delantero;
     _avanzar_delantero(1);
@@ -148,6 +124,8 @@ char sig_caracter() {
 void copiar_lexema(contenedor *c) {
     // Calcular la longitud del lexema (excluyendo el último carácter)
     int longitud = 0;
+
+    // Varios casos
         // Los dos en A
     if (cent.inicio < (cent.array_fisico + TAMBLOQUE) &&
         cent.delantero < (cent.array_fisico + TAMBLOQUE)) {
@@ -182,6 +160,7 @@ void copiar_lexema(contenedor *c) {
         return;
     }
 
+    // Varios casos
     // Copiar los caracteres desde inicio hasta delantero (excluyendo el último)
     // Hay que manejar los casos donde empieza en A y acaba en B y viceversa
         // Los dos en A
@@ -233,21 +212,24 @@ void copiar_lexema(contenedor *c) {
 }
 
 void ignorar_lexema() {
+    // Mueve inicio hasta delantero
     cent.inicio = cent.delantero;
 }
 
 void asignar_lexema(contenedor* c, char* lexema) {
     if (lexema != NULL) {
+        // Copia la cadena en el campo del lexema
         c->lexema = lexema;
     }
 }
 
 void devolver_un_caracter() {
-    // Si delantero ya está al inicio del array físico, no podemos retroceder
+    // Si delantero ya está al inicio del array físico, vamos al final del bloque B
     if (cent.delantero == cent.array_fisico) {
         cent.delantero = &(cent.array_fisico[2*TAMBLOQUE-2]);
         noCargar = 1;
     } else if (cent.delantero == &(cent.array_fisico[TAMBLOQUE])) {
+        // Si delantero está al inicio del bloque B, vamos al final del bloque A
         cent.delantero = &(cent.array_fisico[TAMBLOQUE-2]);
         noCargar = 1;
     } else {
@@ -273,6 +255,5 @@ void ignorar_caracter() {
     }
 
     // Avanzar delantero una posición
-    //_avanzar_delantero(1);
     cent.inicio = cent.delantero;
 }
