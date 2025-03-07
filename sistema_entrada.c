@@ -236,6 +236,12 @@ void ignorar_lexema() {
     cent.inicio = cent.delantero;
 }
 
+void asignar_lexema(contenedor* c, char* lexema) {
+    if (lexema != NULL) {
+        c->lexema = lexema;
+    }
+}
+
 void devolver_un_caracter() {
     // Si delantero ya está al inicio del array físico, no podemos retroceder
     if (cent.delantero == cent.array_fisico) {

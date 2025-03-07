@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
     crear_tabla();
     printf("Inicio del programa\n");
-    imprimir_tabla();
+    //imprimir_tabla();
     printf("\n");
 
     printf("Análisis léxico\n");
@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     printf("\n");
 
     printf("Final del programa\n");
-    imprimir_tabla();
+    //imprimir_tabla();
     eliminar_tabla();
 
     return 0;

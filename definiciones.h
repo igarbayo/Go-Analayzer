@@ -68,10 +68,11 @@ typedef struct {
 // Number literals
 #define INT 374
 #define FLOAT 375
-#define HEX 376
+#define HEX_INT 376
+#define HEX_FLOAT 381
 #define IMAGINARY 377
-#define BINARY 378
-#define OCTAL 380
+#define BINARY_INT 378
+#define OCTAL_INT 380
 
 // More literals
 #define STRING 379

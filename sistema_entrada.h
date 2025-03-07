@@ -49,6 +49,11 @@ void copiar_lexema(contenedor *c);
 void ignorar_lexema();
 
 /**
+ *
+ */
+void asignar_lexema();
+
+/**
  * Retrocede el procesamiento de un carácter
  */
 void devolver_un_caracter();

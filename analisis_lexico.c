@@ -17,9 +17,9 @@
 contenedor c = {-1, NULL};
 
 // Contadores globales para impresión de errores
-int linea = 0;
+int linea = 1;
 int columna = 0;
-int columna_antigua = 0;
+int columna_antigua = 1;
 
 // Variables globales para manejar semicolon (;)
 short insertarSemicolon = 0;
@@ -59,6 +59,18 @@ void _procesarOperador(char primerCaracter);
  * @return 0 si está bien construida
  */
 int _procesarString(char separador);
+
+/**
+ *
+ */
+void _procesarSinCarryReturn();
+/**
+ *
+ * @param str1
+ * @param str2
+ * @return
+ */
+char* _sumar_strings(const char* str1, const char* str2);
 
 /**
  *
@@ -379,7 +391,11 @@ int _procesarString(char separador) {
                 // Si se llega al final del archivo antes, hay un error
                 if (sig == EOF) {
                     error_string(linea, columna);
+                    ignorar_lexema();
                     return 1;
+                }
+                if (sig == '\r') {
+                    _procesarSinCarryReturn();
                 }
             }
             // Aceptamos el lexema
@@ -404,6 +420,7 @@ int _procesarString(char separador) {
                         // Si se llega al final del archivo antes, hay un error
                         if (sig == EOF) {
                             error_string(linea, columna);
+                            ignorar_lexema();
                             return 1;
                         }
                         break;
@@ -412,10 +429,12 @@ int _procesarString(char separador) {
                         if (sig != 'a' && sig != 'b' && sig !='f' && sig != 'n' && sig != 'r' &&
                             sig != 't' && sig != 'v' && sig != '\\' && sig != '"' & sig != '\'') {
                             error_string(linea, columna);
+                            ignorar_lexema();
                             return 1;
                             // Si se llega al final del archivo antes, hay un error
                         } else if (sig == EOF) {
                             error_string(linea, columna);
+                            ignorar_lexema();
                             return 1;
                         } else {
                             estado = 0;
@@ -437,6 +456,74 @@ int _procesarString(char separador) {
     return 0;
 }
 
+void _procesarSinCarryReturn() {
+    char sig;
+    int estado = 0;
+    contenedor aux = {-1, NULL};
+    devolver_un_caracter();
+    copiar_lexema(&aux);
+
+    sig = sig_caracter();
+    _sumar_columna(sig);
+    if (sig == '\r') {
+        ignorar_caracter();
+
+        while (estado != FIN_COMPONENTE) {
+            sig = sig_caracter(); _sumar_columna(sig);
+            // Terminan con `
+            if (sig == '`') {
+                estado = FIN_COMPONENTE;
+            }
+            // Si se llega al final del archivo antes, hay un error
+            if (sig == EOF) {
+                error_string(linea, columna);
+                ignorar_lexema();
+            }
+            if (sig == '\r') {
+                _procesarSinCarryReturn();
+            }
+        }
+        // Aceptamos el lexema
+        copiar_lexema(&c);
+        c.comp_lexico = STRING;
+
+        asignar_lexema(&c, _sumar_strings(aux.lexema, c.lexema));
+        insertarSemicolon = 1;
+    }
+}
+
+// Función para concatenar dos strings manualmente
+char* _sumar_strings(const char* str1, const char* str2) {
+    // Calcular longitudes de los strings
+    size_t len1 = 0, len2 = 0;
+
+    while (str1[len1] != '\0') len1++;  // Calcular longitud de str1
+    while (str2[len2] != '\0') len2++;  // Calcular longitud de str2
+
+    // Reservar memoria para el nuevo string (+1 para el '\0')
+    char* resultado = (char*)malloc(len1 + len2 + 1);
+    if (resultado == NULL) {
+        perror("Error al asignar memoria");
+        exit(EXIT_FAILURE);
+    }
+
+    // Copiar str1 a resultado
+    size_t i;
+    for (i = 0; i < len1; i++) {
+        resultado[i] = str1[i];
+    }
+
+    // Copiar str2 a resultado después de str1
+    for (size_t j = 0; j < len2; j++, i++) {
+        resultado[i] = str2[j];
+    }
+
+    // Agregar el carácter nulo al final
+    resultado[i] = '\0';
+
+    return resultado; // Retorna el nuevo string concatenado
+}
+
 int _procesarNumero(char primerCaracter) {
     char sig = primerCaracter;
     int estado = 0;
@@ -452,7 +539,6 @@ int _procesarNumero(char primerCaracter) {
                     estado = 19; // Float empezando con punto
                 } else {
                     error_entero(linea, columna);
-                    return 1; // Error
                 }
                 break;
             case 1:
@@ -462,6 +548,11 @@ int _procesarNumero(char primerCaracter) {
                     _procesarHexadecimal(); // Hexadecimal
                     return 0;
                 } else if (isdigit(sig)) estado = 10; // Decimal con ceros iniciales
+                else if (sig == '_') estado = 11;   // Manejo de _
+                else if (sig == 'i') {
+                    estado = FIN_COMPONENTE;
+                    c.comp_lexico = IMAGINARY;
+                }
                 else {
                     devolver_un_caracter(); _restar_columna(sig);
                     estado = FIN_COMPONENTE;
@@ -469,26 +560,26 @@ int _procesarNumero(char primerCaracter) {
                 }
                 break;
             case 2: // Binario
-                if (sig == '_') break;
-                if (sig == '0' || sig == '1') estado = 2;
+                if (sig == '_') estado = 12;
+                else if (sig == '0' || sig == '1') estado = 2;
                 else {
                     devolver_un_caracter(); _restar_columna(sig);
                     estado = FIN_COMPONENTE;
-                    c.comp_lexico = BINARY;
+                    c.comp_lexico = BINARY_INT;
                 }
                 break;
             case 3: // Octal
-                if (sig == '_') break;
-                if (sig >= '0' && sig <= '7') estado = 3;
+                if (sig == '_') estado = 13;
+                else if (sig >= '0' && sig <= '7') estado = 3;
                 else {
                     devolver_un_caracter(); _restar_columna(sig);
                     estado = FIN_COMPONENTE;
-                    c.comp_lexico = OCTAL;
+                    c.comp_lexico = OCTAL_INT;
                 }
                 break;
             case 10: // Decimal normal
-                if (sig == '_') break;
-                if (isdigit(sig)) estado = 10;
+                if (sig == '_') estado = 11;
+                else if (isdigit(sig)) estado = 10;
                 else if (sig == '.') {
                     estado = 20;
                 } else if (sig == 'e' || sig == 'E') {
@@ -496,10 +587,38 @@ int _procesarNumero(char primerCaracter) {
                 } else if (sig == 'i') {
                     estado = FIN_COMPONENTE;
                     c.comp_lexico = IMAGINARY;
+                } else if (sig == 'p' || sig == 'P') {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    error_entero(linea, columna);
+                    estado = FIN_COMPONENTE;
                 } else {
                     devolver_un_caracter(); _restar_columna(sig);
                     estado = FIN_COMPONENTE;
                     c.comp_lexico = INT;
+                }
+                break;
+            case 11:
+                if (isdigit(sig)) estado = 10;
+                else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    error_entero(linea, columna);
+                }
+                break;
+            case 12:
+                if (sig == 0 || sig == 1) estado = 2;
+                else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    error_entero(linea, columna);
+                }
+                break;
+            case 13:
+                if (sig >= '0' && sig <= '7') estado = 3;
+                else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    error_entero(linea, columna);
                 }
                 break;
             case 19: // inicio de .123
@@ -507,8 +626,8 @@ int _procesarNumero(char primerCaracter) {
                 else if (sig == 'e' || sig == 'E') estado = 30;
                 else if (isalpha(sig)) {
                     devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
                     _procesarOperador('.');
-                    return 1;
                 }
                 break;
             case 20: // Parte fraccionaria de decimal o inicio de .123
@@ -516,13 +635,13 @@ int _procesarNumero(char primerCaracter) {
                 else if (sig == 'e' || sig == 'E') estado = 30;
                 else {
                     devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
                     error_float(linea, columna);
-                    return 1;
                 }
                 break;
             case 21:
-                if (sig == '_') break;
-                if (isdigit(sig)) estado = 21;
+                if (sig == '_') estado = 22;
+                else if (isdigit(sig)) estado = 21;
                 else if (sig == 'e' || sig == 'E') estado = 30;
                 else if (sig == 'i') {
                     estado = FIN_COMPONENTE;
@@ -533,48 +652,62 @@ int _procesarNumero(char primerCaracter) {
                     c.comp_lexico = FLOAT;
                 }
                 break;
+            case 22:
+                if (isdigit(sig)) estado = 21;
+                else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    error_float(linea, columna);
+                }
+                break;
             case 30: // Exponente
                 if (sig == '+' || sig == '-') estado = 31;
                 else if (isdigit(sig)) estado = 32; // Permitir 1.e0
                 else {
                     devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
                     error_float(linea, columna);
-                    return 1;
                 }
                 break;
             case 31: // Signo después de exponente
                 if (isdigit(sig)) estado = 32;
                 else {
                     devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
                     error_float(linea, columna);
-                    return 1;
                 }
                 break;
             case 32: // Dígitos en el exponente
-                if (sig == '_') break;
-                if (isdigit(sig)) estado = 32;
+                if (sig == '_') estado = 33;
+                else if (isdigit(sig)) estado = 32;
                 else if (sig == 'i') { // Para casos como 1.e0+0i
                     estado = FIN_COMPONENTE;
                     c.comp_lexico = IMAGINARY;
-                } else if (sig == '+' || sig == '-') { // Para manejar 1.e0+0
-                    estado = 40;
                 } else {
                     devolver_un_caracter(); _restar_columna(sig);
                     estado = FIN_COMPONENTE;
                     c.comp_lexico = FLOAT;
                 }
                 break;
+            case 33:
+                if (isdigit(sig)) estado = 32;
+                else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    error_float(linea, columna);
+                }
+                break;
             case 40: // Manejo del signo después del exponente (como en 1.e0+0i)
                 if (isdigit(sig)) estado = 41;
                 else {
                     devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
                     error_float(linea, columna);
-                    return 1;
                 }
                 break;
             case 41: // Dígitos después del signo en el exponente
                 if (sig == '_') break;
-                if (isdigit(sig)) estado = 41;
+                else if (isdigit(sig)) estado = 41;
                 else if (sig == 'i') { // Para casos como 1.e0+0i
                     estado = FIN_COMPONENTE;
                     c.comp_lexico = IMAGINARY;
@@ -607,10 +740,13 @@ int _procesarHexadecimal() {
                     estado = 1;
                 } else if (sig == '_') {
                     estado = 2;
+                } else if (sig == '.') {
+                    estado = 3;
                 } else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
                     // Si no hay digito HEX o _
                     error_hexadecimal(linea, columna);
-                    return 1;
                 }
                 break;
             case 1:
@@ -618,22 +754,111 @@ int _procesarHexadecimal() {
                 if (!isxdigit(sig)) {
                     if (sig == '_') {
                         estado = 2;
+                    } else if (sig == '.') {
+                        estado = 3;
+                    } else if (sig == 'p' || sig == 'P') {
+                        estado = 5;
                     } else {
                         // Si ya ha acabado el literal HEX
                         devolver_un_caracter(); _restar_columna(sig);
                         estado = FIN_COMPONENTE;
-                        (c.comp_lexico) = HEX;
+                        (c.comp_lexico) = HEX_INT;
                     }
-                }
+                } else if (sig == '.') estado = 3;
                 break;
             case 2:
                 // Se ha leído una _
                 if (!isxdigit(sig)) {
                     // No se puede acabar en _
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
                     error_hexadecimal(linea, columna);
-                    return 1;
                 } else {
                     estado = 1;
+                }
+                break;
+            case 3: // punto
+                if (isxdigit(sig)) {
+                    estado = 4;
+                } else if (sig == 'p' || sig == 'P') {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    error_hexadecimal(linea, columna);
+                } else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    (c.comp_lexico) = HEX_FLOAT;
+                }
+                break;
+
+            case 4: // mantisa fracción
+                if (isxdigit(sig) && sig != 'E' && sig != 'e') {
+                    estado = 4;
+                } else if (sig == 'p' || sig == 'P') {
+                    estado = 5;
+                } else if (sig == 'e' || sig == 'E') {
+                    estado = 9;
+                } else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    (c.comp_lexico) = HEX_FLOAT;
+                }
+                break;
+            case 9:
+                if (sig == '+' || sig == '-') {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    error_hexadecimal(linea, columna);
+                } else if (isxdigit(sig)) {
+                    estado = 4;
+                } else if (sig == 'p' || sig == 'P') {
+                    estado = 5;
+                } else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    (c.comp_lexico) = HEX_FLOAT;
+                }
+                break;
+
+            case 5: // exponente prefijo
+                if (sig == '+' || sig == '-') {
+                    estado = 6;
+                } else if (isdigit(sig)) {
+                    estado = 7;
+                } else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    error_hexadecimal(linea, columna);
+                }
+                break;
+
+            case 6: // exponente signo
+                if (isdigit(sig)) {
+                    estado = 7;
+                } else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    error_hexadecimal(linea, columna);
+                }
+                break;
+
+            case 7: // exponente dígitos
+                if (isdigit(sig)) {
+                    estado = 7;
+                } else if (sig == '_') {
+                    estado = 8;
+                } else {
+                    devolver_un_caracter(); _restar_columna(sig);
+                    estado = FIN_COMPONENTE;
+                    (c.comp_lexico) = HEX_FLOAT;
+                }
+                break;
+            case 8: // exponente dígitos con _
+                if (isdigit(sig)) {
+                    estado = 7;
+                } else {
+                    estado = FIN_COMPONENTE;
+                    error_hexadecimal(linea, columna);
                 }
                 break;
             default:
@@ -691,7 +916,7 @@ void _restar_columna(char caracter) {
 void _sumar_linea() {
     linea++;
     columna_antigua = columna;
-    columna = 0;
+    columna = 1;
 }
 
 void _restar_linea() {
