@@ -509,7 +509,7 @@ int _procesarString(char separador) {
                     case 1:
                         // Caracteres de escape válidos
                         if (sig != 'a' && sig != 'b' && sig !='f' && sig != 'n' && sig != 'r' &&
-                            sig != 't' && sig != 'v' && sig != '\\' && sig != '"' & sig != '\'') {
+                            sig != 't' && sig != 'v' && sig != '\\' && sig != '"' && sig != '\'') {
                             devolver_un_caracter();
                             _restar_columna(sig);
                             estado = FIN_COMPONENTE;

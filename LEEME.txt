@@ -1,0 +1,10 @@
+Para compilar todo, colócate en la carpeta con los archivos y ejecuta:
+    make
+Para ejecutar el programa con el fichero base, ejecuta:
+    ./P1_CompGo concurrentSum.go
+Para ejecutar con <nombre_fichero>, haz:
+    ./P1_CompGo <nombre_fichero>
+Si quieres verificar el buen uso de memoria, ejecuta, con valgrind previamente instalado:
+    valgrind ./P1_CompGo <nombre_fichero>
+Para borrar los archivos objeto y el ejecutable, en la misma carpeta, haz:
+    make clean

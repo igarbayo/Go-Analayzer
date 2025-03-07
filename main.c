@@ -12,20 +12,24 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    // Creación de la tabla
+    // 1. Inicialización de estructuras de datos
     crear_tabla();
     printf("Inicio del programa\n");
+    // Impresión de la tabla
     imprimir_tabla();
     printf("\n");
 
-    // Etapa de análisis léxico
+    // 2. Etapa de compilación (análisis léxico)
     printf("Análisis léxico\n");
     iniciar_analisis(argv[1]);
     printf("\n");
-
-    // Liberación de la memoria
-    printf("Final del programa\n");
+    // Impresión de la tabla
     imprimir_tabla();
+    printf("\n");
+
+    // 3. Fase de finalización
+    printf("Final del programa\n");
+    // Liberación de la memoria de la tabla
     eliminar_tabla();
 
     return 0;
