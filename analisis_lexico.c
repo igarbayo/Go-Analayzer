@@ -21,6 +21,14 @@ int columna_antigua = 1;
 
 // Variables globales para manejar semicolon (;)
 short insertarSemicolon = 0;
+char* semicolon;
+
+// Variable global para el lexema de EOF
+char* end_of_file;
+
+// Variable global para el resultado de la suma de strings
+char* resultado;
+
 
 // FUNCIONES PRIVADAS (CABECERAS) ////////////////////////////////////
 
@@ -130,6 +138,12 @@ void iniciar_analisis_lexico(char* fichero) {
 }
 
 void terminar_analisis_lexico() {
+    if (end_of_file != NULL) {
+        free(end_of_file);
+    }
+    if (resultado != NULL) {
+        free(resultado);
+    }
     cerrar_sistema_entrada();
 }
 
@@ -198,7 +212,7 @@ contenedor sig_comp_lexico() {
         } else {
             // En otro caso, devolvemos el último componente léxico
             c.comp_lexico = FINFICHERO;
-            char* end_of_file = (char*) malloc (4*sizeof(char));
+            end_of_file = (char*) malloc (4*sizeof(char));
             end_of_file[0] = 'E';
             end_of_file[1] = '0';
             end_of_file[2] = 'F';
@@ -582,7 +596,7 @@ int _procesarSinCarryReturn() {
         // Se asigna la suma de los dos lexemas
         asignar_lexema(&c, _sumar_strings(aux.lexema, c.lexema));
 
-        // SI termina línea, hay que insertar semicolon
+        // Si termina línea, hay que insertar semicolon
         insertarSemicolon = 1;
     }
 
@@ -598,7 +612,11 @@ char* _sumar_strings(const char* str1, const char* str2) {
     while (str2[len2] != '\0') len2++;  // Calcular longitud de str2
 
     // Reservar memoria para el nuevo string (+1 para el '\0')
-    char* resultado = (char*)malloc(len1 + len2 + 1);
+    if (resultado != NULL) {
+        free(resultado);
+    }
+
+    resultado = (char*)malloc(len1 + len2 + 1);
     if (resultado == NULL) {
         error_memoria();
         exit(EXIT_FAILURE);
@@ -1019,7 +1037,7 @@ void _devolverSemicolon() {
     // Guarda el componente léxico
     c.comp_lexico = (int) ';';
 
-    char* semicolon = (char*) malloc (2*sizeof(char));
+    semicolon = (char*) malloc (2*sizeof(char));
     if (semicolon == NULL) {
         error_memoria();
     } else {

@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "tabla_simbolos.h"
 #include "analisis_sintactico.h"
 #include "errores.h"

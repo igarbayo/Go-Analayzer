@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 // Colores para la impresión
 #define RED     "\x1b[31m"

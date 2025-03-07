@@ -1,8 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "analisis_sintactico.h"
 #include "analisis_lexico.h"
-#include "sistema_entrada.h"
 
 void iniciar_analisis(char *nombre_fichero) {
     contenedor c;

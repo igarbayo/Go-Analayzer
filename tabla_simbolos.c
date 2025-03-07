@@ -4,7 +4,6 @@
 #include "tabla_simbolos.h"
 #include "definiciones.h"
 #include "avl.h"
-#include "errores.h"
 
 
 // Variable global
@@ -71,22 +70,12 @@ void crear_tabla() {
         strcpy(c. lexema, keywords[i]);
         c.comp_lexico = 301 + i;
         insertar(&tabla, (tipoelem) c);
+        free(c.lexema);
     }
 }
 
 void insertar_elemento(contenedor elemento) {
-    // Llamamos a la función del AVL
-    contenedor aux;
-    aux.comp_lexico = elemento.comp_lexico;
-    aux.lexema = (char *) malloc ((strlen(elemento.lexema)+1)*sizeof(char));
-
-    // Solo insertamos si se puede reservar la memoria
-    if (aux.lexema == NULL) {
-        error_memoria();
-    } else {
-        strcpy(aux.lexema, elemento.lexema);
-        insertar(&tabla, (tipoelem) aux);
-    }
+    insertar(&tabla, (tipoelem) elemento);
 }
 
 int buscar_elemento(char* clave) {
