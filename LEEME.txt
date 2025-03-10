@@ -8,3 +8,4 @@ Si quieres verificar el buen uso de memoria, ejecuta, con valgrind previamente i
     valgrind ./P1_CompGo <nombre_fichero>
 Para borrar los archivos objeto y el ejecutable, en la misma carpeta, haz:
     make clean
+Para modificar TAMBLOQUE, consultar definiciones.h
