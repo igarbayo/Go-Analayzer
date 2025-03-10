@@ -9,19 +9,46 @@ centinela cent;
 FILE *fichero;
 
 // Variable para decidir si cargar o no un bloque
-short noCargar=0;
+short noCargar = 0;
+
+// Variable para decidir si el lexema excede el tamaño permitido
+short excede = 0;
 
 // FUNCIONES PRIVADAS ///////////////////////
 
-// Avanza delantero n posiciones
+/**
+ * Avanza delantero n posiciones
+ * @param n posiciones
+ */
 void _avanzar_delantero(int n) {
     for (int i = 0; i < n; i++) {
         cent.delantero++;
     }
 }
 
-// Carga el siguiente bloque en el centinela
+/**
+ * Avanza inicio n posiciones
+ * @param n posiciones
+ */
+void _avanzar_inicio(int n) {
+    for (int i=0; i<n; i++) {
+        if (cent.inicio == &cent.array_fisico[TAMBLOQUE - 2]) {
+            cent.inicio = &cent.array_fisico[TAMBLOQUE];
+        } else if (cent.inicio == &cent.array_fisico[2*TAMBLOQUE - 2]) {
+            cent.inicio = &cent.array_fisico[0];
+        } else {
+            cent.inicio++;
+        }
+    }
+}
+
+/**
+ * Carga el siguiente bloque en el centinela
+ */
 void _cargar_bloque() {
+    // Para gestionar bloques pequeños
+    excede = 0;
+
     if (cent.delantero == &cent.array_fisico[TAMBLOQUE - 1]) {
         // Cargar en el bloque B
         size_t leidos = fread(&cent.array_fisico[TAMBLOQUE], sizeof(char), TAMBLOQUE-1, fichero);
@@ -37,9 +64,10 @@ void _cargar_bloque() {
         // Avanzar delantero al inicio del bloque B
         cent.delantero = &cent.array_fisico[TAMBLOQUE];
 
-        // Mover inicio si se sobreescribe
+        //Mover inicio si se sobreescribe
         if (cent.inicio >= (cent.array_fisico + TAMBLOQUE)) {
             cent.inicio = &cent.array_fisico[0];
+            excede = 1;
         }
 
     } else if (cent.delantero == &cent.array_fisico[2 * TAMBLOQUE - 1] ||
@@ -55,18 +83,24 @@ void _cargar_bloque() {
 
         // Asignar fin de bloque
         cent.array_fisico[TAMBLOQUE - 1] = FINBLOQUE;
-        // Avanzar delantero al inicio del bloque A
-        cent.delantero = &cent.array_fisico[0];
 
         // Mover inicio si se sobreescribe
-        if (cent.inicio < (cent.array_fisico + TAMBLOQUE)) {
+        // Comprobación adicional de delantero para no mover inicio al comienzo del programa
+        if (cent.inicio < (cent.array_fisico + TAMBLOQUE) && cent.delantero >= (cent.array_fisico + TAMBLOQUE)) {
             cent.inicio = &cent.array_fisico[TAMBLOQUE];
+            excede = 1;
         }
+
+        // Avanzar delantero al inicio del bloque A
+        cent.delantero = &cent.array_fisico[0];
     }
 }
 
-// Solo desplaza delantero de bloque, sin cargar
+/**
+ * SOlo desplaza delantero de bloque, sin cargar
+ */
 void _mover_bloque() {
+    excede = 0;
     if (cent.delantero == &cent.array_fisico[TAMBLOQUE - 1]) {
         // Avanzar delantero al inicio del bloque B
         cent.delantero = &cent.array_fisico[TAMBLOQUE];
@@ -136,6 +170,8 @@ int copiar_lexema(contenedor *c) {
     int retorno = 0;
     // Calcular la longitud del lexema (excluyendo el último carácter)
     int longitud = 0;
+    // Longitudes por bloques
+    int longitud_A, longitud_B = 0;
 
     // Varios casos
         // Los dos en A
@@ -148,8 +184,8 @@ int copiar_lexema(contenedor *c) {
         // Inicio en B, Delantero en A
     } else if (cent.delantero < (cent.array_fisico + TAMBLOQUE)) {
         // Calcular la parte del bloque B + la parte del bloque A
-        int longitud_B = &cent.array_fisico[2*TAMBLOQUE] - cent.inicio - 1;
-        int longitud_A = cent.delantero - &cent.array_fisico[0];
+        longitud_B = &cent.array_fisico[2*TAMBLOQUE] - cent.inicio - 1;
+        longitud_A = cent.delantero - &cent.array_fisico[0];
         longitud = longitud_B + longitud_A;
         // Los dos en B
     } else {
@@ -157,10 +193,11 @@ int copiar_lexema(contenedor *c) {
     }
 
     // Verificar si el lexema excede el tamaño máximo permitido
-    if (longitud >= 2*TAMBLOQUE - 1) {
+    if (longitud > 2*TAMBLOQUE - 2 || excede == 1) {
         // Truncar el lexema a los últimos TAMBLOQUE - 1 caracteres
+        _avanzar_inicio(longitud - (TAMBLOQUE - 1));
         longitud = TAMBLOQUE - 1;
-        cent.inicio = cent.delantero - longitud;  // Ajustar inicio para truncar
+        //cent.inicio = cent.delantero - longitud;  // Ajustar inicio para truncar
         retorno = 1;
     }
 
@@ -228,6 +265,7 @@ int copiar_lexema(contenedor *c) {
 }
 
 void ignorar_lexema() {
+    excede = 0;
     // Mueve inicio hasta delantero
     cent.inicio = cent.delantero;
 }
