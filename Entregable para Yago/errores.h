@@ -49,11 +49,6 @@ void error_fichero();
 void error_memoria();
 
 /**
- * Error de exceder el tamaño del bloque
- */
-void error_tambloque(int linea, int columna, char* lexema);
-
-/**
  * Error de número de parámetros de entrada del programa
  * @param programa nombre del ejecutable para imprimir
  */

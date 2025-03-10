@@ -3,7 +3,7 @@
 
 #include "definiciones.h"
 
-// Carácter de fin de bloque
+#define TAMBLOQUE 64
 #define FINBLOQUE '\0'
 
 // Creación del tipo de dato
@@ -35,10 +35,8 @@ char sig_caracter();
 /**
  * Copia el lexema procesándose actualmente
  * @param c contenedor donde copiar el lexema
- * @return 1 si el lexema excede el tamaño del bloque
- * @return 0 en otro caso
  */
-int copiar_lexema(contenedor *c);
+void copiar_lexema(contenedor *c);
 
 /**
  * Ignora el contenido de un lexema.

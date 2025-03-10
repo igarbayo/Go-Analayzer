@@ -47,12 +47,6 @@ void error_memoria() {
     printf(RED "\tError de ejecución: no se puede reservar memoria.\n" RESET);
 }
 
-void error_tambloque(int linea, int columna, char* lexema) {
-    printf(RED "\tError de construcción: el lexema excede el tamaño del bloque\n" RESET);
-    printf(RED "\tLínea %d, columna %d: " RESET, linea, columna);
-    printf(YELLOW "%s\n" RESET, lexema);
-}
-
 void error_parametros(char* programa) {
     printf(RED "\tError de ejecución: número de parámetros incorrecto. Usar %s <código_fuente>.\n" RESET, programa);
 }

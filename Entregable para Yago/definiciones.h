@@ -6,9 +6,6 @@ typedef struct {
     char *lexema;
 } contenedor;
 
-// Tamaño de bloque para doble centinela
-#define TAMBLOQUE 64
-
 // Identificador
 #define ID 300
 

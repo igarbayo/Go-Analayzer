@@ -310,9 +310,7 @@ void _procesarIdentificador() {
             // Se devuelve el carácter leído de más
             devolver_un_caracter(); _restar_columna(sig);
             // Aceptamos el lexema
-            if (copiar_lexema(&c) == 1) {
-                error_tambloque(linea, columna, c.lexema);
-            }
+            copiar_lexema(&c);
             insertarSemicolon = 1;
 
             if (c.lexema != NULL) {
@@ -443,9 +441,7 @@ void _procesarOperador(char primerCaracter) {
     }
 
     // Copiamos el lexema y finalizamos el procesamiento
-    if (copiar_lexema(&c) == 1) {
-        error_tambloque(linea, columna, c.lexema);
-    }
+    copiar_lexema(&c);
 }
 
 int _procesarString(char separador) {
@@ -468,9 +464,7 @@ int _procesarString(char separador) {
                     _restar_columna(sig);
                     estado = FIN_COMPONENTE;
                     c.comp_lexico = ERRORLEXICO;
-                    if (copiar_lexema(&c) == 1) {
-                        error_tambloque(linea, columna, c.lexema);
-                    }
+                    copiar_lexema(&c);
                     error_string(linea, columna, c.lexema);
                     return 1;
                 }
@@ -480,9 +474,7 @@ int _procesarString(char separador) {
                 }
             }
             // Aceptamos el lexema
-            if (copiar_lexema(&c) == 1) {
-                error_tambloque(linea, columna, c.lexema);
-            }
+            copiar_lexema(&c);
             c.comp_lexico = STRING;
 
             // Si termina línea, hay que insertar semicolon
@@ -509,9 +501,7 @@ int _procesarString(char separador) {
                             _restar_columna(sig);
                             estado = FIN_COMPONENTE;
                             c.comp_lexico = ERRORLEXICO;
-                            if (copiar_lexema(&c) == 1) {
-                                error_tambloque(linea, columna, c.lexema);
-                            }
+                            copiar_lexema(&c);
                             error_string(linea, columna, c.lexema);
                             return 1;
                         }
@@ -524,9 +514,7 @@ int _procesarString(char separador) {
                             _restar_columna(sig);
                             estado = FIN_COMPONENTE;
                             c.comp_lexico = ERRORLEXICO;
-                            if (copiar_lexema(&c) == 1) {
-                                error_tambloque(linea, columna, c.lexema);
-                            }
+                            copiar_lexema(&c);
                             error_string(linea, columna, c.lexema);
                             return 1;
                             // Si se llega al final del archivo antes, hay un error
@@ -535,9 +523,7 @@ int _procesarString(char separador) {
                             _restar_columna(sig);
                             estado = FIN_COMPONENTE;
                             c.comp_lexico = ERRORLEXICO;
-                            if (copiar_lexema(&c) == 1) {
-                                error_tambloque(linea, columna, c.lexema);
-                            }
+                            copiar_lexema(&c);
                             error_string(linea, columna, c.lexema);
                             return 1;
                         } else {
@@ -549,9 +535,7 @@ int _procesarString(char separador) {
                 }
             }
             // Aceptamos el lexema
-            if (copiar_lexema(&c) == 1) {
-                error_tambloque(linea, columna, c.lexema);
-            }
+            copiar_lexema(&c);
             c.comp_lexico = STRING;
 
             // Si termina línea, hay que insertar semicolon
@@ -572,9 +556,7 @@ int _procesarSinCarryReturn() {
     // Contenedor auxiliar con la primera parte del lexema
     contenedor aux = {-1, NULL};
     devolver_un_caracter();
-    if (copiar_lexema(&aux) == 1) {
-        error_tambloque(linea, columna, aux.lexema);
-    }
+    copiar_lexema(&aux);
 
     // Consumimos un carácter
     sig = sig_caracter();
@@ -595,9 +577,7 @@ int _procesarSinCarryReturn() {
                 _restar_columna(sig);
                 estado = FIN_COMPONENTE;
                 c.comp_lexico = ERRORLEXICO;
-                if (copiar_lexema(&c) == 1) {
-                    error_tambloque(linea, columna, c.lexema);
-                }
+                copiar_lexema(&c);
             }
             if (sig == '\r') {
                 // Es una función de comportamiento recursivo
@@ -605,9 +585,7 @@ int _procesarSinCarryReturn() {
             }
         }
         // Aceptamos el lexema
-        if (copiar_lexema(&c) == 1) {
-            error_tambloque(linea, columna, c.lexema);
-        }
+        copiar_lexema(&c);
         if (c.comp_lexico == ERRORLEXICO) {
             error_string(linea, columna, c.lexema);
             return 1;
@@ -874,9 +852,7 @@ int _procesarNumero(char primerCaracter) {
 
     // Si no se ha terminado procesando un operador (se procesa un número)
     if (tipo != 3) {
-        if (copiar_lexema(&c) == 1) {
-            error_tambloque(linea, columna, c.lexema);
-        }
+        copiar_lexema(&c);
 
         // Si termina línea, hay que insertar semicolon
         insertarSemicolon = 1;
@@ -1042,9 +1018,7 @@ int _procesarHexadecimal() {
         }
     }
 
-    if (copiar_lexema(&c) == 1) {
-        error_tambloque(linea, columna, c.lexema);
-    }
+    copiar_lexema(&c);
 
     // Si termina línea, hay que insertar semicolon
     insertarSemicolon = 1;

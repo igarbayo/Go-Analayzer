@@ -36,12 +36,6 @@ void _cargar_bloque() {
         cent.array_fisico[2 * TAMBLOQUE - 1] = FINBLOQUE;
         // Avanzar delantero al inicio del bloque B
         cent.delantero = &cent.array_fisico[TAMBLOQUE];
-
-        // Mover inicio si se sobreescribe
-        if (cent.inicio >= (cent.array_fisico + TAMBLOQUE)) {
-            cent.inicio = &cent.array_fisico[0];
-        }
-
     } else if (cent.delantero == &cent.array_fisico[2 * TAMBLOQUE - 1] ||
                cent.delantero == &cent.array_fisico[0]) {
         // Cargar en el bloque A
@@ -57,11 +51,6 @@ void _cargar_bloque() {
         cent.array_fisico[TAMBLOQUE - 1] = FINBLOQUE;
         // Avanzar delantero al inicio del bloque A
         cent.delantero = &cent.array_fisico[0];
-
-        // Mover inicio si se sobreescribe
-        if (cent.inicio < (cent.array_fisico + TAMBLOQUE)) {
-            cent.inicio = &cent.array_fisico[TAMBLOQUE];
-        }
     }
 }
 
@@ -132,8 +121,7 @@ char sig_caracter() {
     return caracter;
 }
 
-int copiar_lexema(contenedor *c) {
-    int retorno = 0;
+void copiar_lexema(contenedor *c) {
     // Calcular la longitud del lexema (excluyendo el último carácter)
     int longitud = 0;
 
@@ -157,11 +145,10 @@ int copiar_lexema(contenedor *c) {
     }
 
     // Verificar si el lexema excede el tamaño máximo permitido
-    if (longitud >= 2*TAMBLOQUE - 1) {
+    if (longitud >= TAMBLOQUE - 1) {
         // Truncar el lexema a los últimos TAMBLOQUE - 1 caracteres
         longitud = TAMBLOQUE - 1;
         cent.inicio = cent.delantero - longitud;  // Ajustar inicio para truncar
-        retorno = 1;
     }
 
     // Reservar memoria para el lexema (longitud + 1 para el carácter nulo)
@@ -170,7 +157,7 @@ int copiar_lexema(contenedor *c) {
         error_memoria();
         c->lexema = NULL;
         // Finalizamos si no se puede reservar memoria
-        return 0;
+        return;
     }
 
     // Varios casos
@@ -222,9 +209,6 @@ int copiar_lexema(contenedor *c) {
     lexema[longitud] = '\0';
     cent.inicio = cent.delantero;
     c->lexema = lexema;
-
-    // Para verificar si se excede el TAMBLOQUE
-    return retorno;
 }
 
 void ignorar_lexema() {
